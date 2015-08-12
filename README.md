@@ -74,12 +74,11 @@ Keys 由三种不同“钥匙”组成。你需要根据软件的需求，使用
 
 ```swift
 	let key = SymmetricKey(key: keyData, hmacKey: hmacData, IV: IVData)
-	let data = "Hello World!".dataUsingEncoding(NSUTF8StringEncoding)!
 	do {
-		let encryptedData = try key.encrypt(data)
-		print(encryptedData)
+		let decryptedData = try key.decrypt(data)
+		print(decryptedData)
 	} catch {
-		print("Cannot encrypt data")
+		print("Cannot decrypt data")
 	}
 ```
 
