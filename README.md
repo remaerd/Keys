@@ -34,6 +34,55 @@ Keys 由三种不同“钥匙”组成。你需要根据软件的需求，使用
 
 用户的数据不应该直接使用密码字串符加密。当你需要加密数据时，你必须使用对称密钥加密用户的数据，再用密码加密对称密钥。 同理，当你需要解密数据时。你需要通过密码解密对称密钥，再用对称密钥解密用户的数据。
 
+#### 新建密码
+
+```swift
+	let password = Password("Hello")
+	let salt = password.salt // 盐
+	let rounds = password.rounds // Rounds
+	let data = password.data // 由密码和盐计算出来的密钥
+```
+
+每次新建密码会自动生成一个随机盐和 Round 值。当你使用相同的密码但不同的盐 ／ Round 值生成密码后，新的 Password 不能够解密之前用 Password 加密过的数据。
+你不应该将用户的密码明文保存到本地，但你需要将盐和 Rounds 保存到本地。当创建密码时，你应该重新问用户获取密码，再用盐和 Rounds 重建密码。
+
+#### 新建对称密钥
+
+```swift
+	let key = SymmetricKey()
+	let encryptionKey = key.cryptoKey // 加密用的密钥
+	let iv = key.IV // IV
+	let hmacKey = key.hmacKey // 生成 MAC （ 数据验证码 Message Authentication Code） 用的密钥
+```
+
+每次新建对称密钥会自动生成一个随机 IV 值和 验证数据用的 HMAC。当你需要保留密钥时，你需要同时在本地存储 cryptoKey，IV，和 hmac。
+
+#### 加密数据
+
+```swift
+	let key = SymmetricKey()
+	let data = "Hello World!".dataUsingEncoding(NSUTF8StringEncoding)!
+	do {
+		let encryptedData = try key.encrypt(data)
+		print(encryptedData)
+	} catch {
+		print("Cannot encrypt data")
+	}
+```
+
+#### 解密数据
+
+```swift
+	let key = SymmetricKey(key: keyData, hmacKey: hmacData, IV: IVData)
+	let data = "Hello World!".dataUsingEncoding(NSUTF8StringEncoding)!
+	do {
+		let encryptedData = try key.encrypt(data)
+		print(encryptedData)
+	} catch {
+		print("Cannot encrypt data")
+	}
+```
+
 ### 需要传输的加密数据
 
 当你需要将某些加密数据传输到第三方时，你需要使用非对称密钥。你可以想象一个金库有两把钥匙，一把能够用来将黄金放进金库，一把能够用来取出黄金。当你需要传输数据时，你在本地使用其中一把钥匙加密数据后，你将另一把钥匙和数据传输到另外一个设备，另外一个设备就能够解密你的数据。
