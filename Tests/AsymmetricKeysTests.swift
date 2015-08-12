@@ -6,4 +6,13 @@
 //
 //
 
-import Foundation
+import XCTest
+import Keys
+
+
+class AsymmetricKeyTests: XCTestCase {
+  
+  func testCreateKey() {
+    let key = AsymmetricKeys()
+  }
+}

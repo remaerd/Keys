@@ -10,7 +10,8 @@ import Foundation
 import CommonCrypto
 
 
-public struct Password : KeyType {
+// 密码。 用于加密对对称密钥。 不能直接用于加密数据。
+public struct Password {
   
   public enum Error : ErrorType {
     case CannotCreatePassword
@@ -19,7 +20,7 @@ public struct Password : KeyType {
   
   public let salt     : NSData
   public let options  : Options
-  public let rounds   : UInt32
+  public let rounds   : Int
   public let data     : NSData
   
   
@@ -39,19 +40,12 @@ public struct Password : KeyType {
   }
   
   
-  public var strength : Int {
-    return 0
-  }
-  
-  
   public lazy var key : SymmetricKey = {
     let keySize = self.options.keySize / 2
-    let keyBytes = UnsafeMutablePointer<Void>()
-    let hmacBytes = UnsafeMutablePointer<Void>()
-    self.data.getBytes(keyBytes)
-    self.data.getBytes(hmacBytes, range: NSRange(location: keySize,length: keySize))
-    let keyData = NSData(bytes: keyBytes, length: keySize)
-    let hmacData = NSData(bytes: hmacBytes, length: keySize)
+    let keyData = NSMutableData(length: keySize)!
+    let hmacData = NSMutableData(length: keySize)!
+    self.data.getBytes(keyData.mutableBytes, length: keySize)
+    self.data.getBytes(hmacData.mutableBytes, range: NSRange(location: keySize,length: keySize))
     return try! SymmetricKey(key: keyData, hmacKey: hmacData, IV: NSData())
   }()
   
@@ -64,6 +58,7 @@ public struct Password : KeyType {
   
   
   public init(password:String, salt:NSData = NSData.randomData(Password.DefaultOptions.saltSize), roundCount: Int? = nil, options: Options = Password.DefaultOptions) throws {
+    
     
     let derivedData = NSMutableData(length: options.keySize)!
     let saltBytes = UnsafePointer<UInt8>(salt.bytes)
@@ -81,13 +76,14 @@ public struct Password : KeyType {
     if Int(result) != kCCSuccess { throw Error.CannotCreatePassword }
     
     self.data = derivedData
-    self.rounds = count
+    self.rounds = Int(count)
     self.salt = salt
     self.options = options
   }
   
   
-  public mutating func encrypt(key:SymmetricKey) throws -> (key: NSData, hmac: NSData?, IV: NSData) {
+  // 用于加密对称密钥
+  mutating public func encrypt(key:SymmetricKey) throws -> (key: NSData, hmac: NSData?, IV: NSData) {
     do {
       let encryptKey = try self.key.encrypt(key.cryptoKey)
       let IV = try self.key.encrypt(key.IV)
@@ -100,7 +96,8 @@ public struct Password : KeyType {
   }
   
   
-  public mutating func decrypt(key:NSData, hmacKey: NSData?, IV: NSData, options: SymmetricKey.Options = SymmetricKey.DefaultOptions) throws -> SymmetricKey {
+  // 
+  mutating public func decrypt(key:NSData, hmacKey: NSData?, IV: NSData, options: SymmetricKey.Options = SymmetricKey.DefaultOptions) throws -> SymmetricKey {
     do {
       let keyData = try self.key.decrypt(key)
       let IVData = try self.key.decrypt(IV)

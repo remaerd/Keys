@@ -19,31 +19,37 @@ public enum KeyStrength {
 }
 
 
-// 密钥协议
-public protocol KeyType {
-  var strength  : Int { get }
-}
-
-
 // 可用于加密内容的密钥
-public protocol Encryptable : KeyType {
+public protocol Encryptable {
   
+  // 加密数据
   func encrypt(data:NSData) throws -> NSData
+  
+  // 获得数据验证码
   func signature(data:NSData) throws -> NSData
+  
+  // 加密数据后嵌入数据验证码
+//  func encryptThenMac(data:NSData) throws -> NSData
 }
 
 
 // 可用于解密内容的密钥
-public protocol Decryptable : KeyType {
+public protocol Decryptable {
   
+  // 解密数据
   func decrypt(data:NSData) throws -> NSData
+  
+  // 验证数据
   func verify(data:NSData, signature: NSData) throws -> Bool
+  
+  // 验证数据后再解密
+//  func verifyThenDecrypt(data:NSData) throws -> NSData
 }
 
 
-// 随机字串符
 public extension String {
   
+  // 随机字串符
   public static func randomString(length:Int) -> String {
     
     let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -60,9 +66,9 @@ public extension String {
 }
 
 
-// 随机 NSData 数据
 public extension NSData {
   
+  // 随机 NSData 数据
   public static func randomData(length:Int) -> NSData {
     let data = NSMutableData(length: length)!
     SecRandomCopyBytes(kSecRandomDefault, length, UnsafeMutablePointer<UInt8>(data.mutableBytes))
@@ -70,6 +76,7 @@ public extension NSData {
   }
   
   
+  // 对称密钥用的随机 IV 数据
   public static func randomIV(blockSize : Int) -> NSData {
     var randomIV : [UInt8] = [UInt8]()
     var i : Int = 0

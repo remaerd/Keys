@@ -37,6 +37,11 @@ public extension PrivateKey {
     if signature == nil { throw Error.CannotSignData }
     return signature!
   }
+  
+  
+//  public func encryptThenMac(data: NSData) throws -> NSData {
+//    return NSData()
+//  }
 }
 
 
@@ -68,5 +73,10 @@ public extension PublicKey {
     if result == true { return true }
     else { return false }
   }
+  
+  
+//  public func verifyThenDecrypt(data: NSData) throws -> NSData {
+//    return NSData()
+//  }
 }
 

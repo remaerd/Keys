@@ -31,6 +31,11 @@ public extension PrivateKey {
     let signature = NSData(bytesNoCopy: signaturePointer, length: signatureLength.memory)
     return signature
   }
+  
+  
+//  public func encryptThenMac(data: NSData) throws -> NSData {
+//    return NSData()
+//  }
 }
 
 
@@ -54,5 +59,10 @@ public extension PublicKey {
     if result != 0 { return false }
     else { return false }
   }
+  
+  
+//  public func verifyThenDecrypt(data: NSData) throws -> NSData {
+//    return NSData()
+//  }
 }
 

@@ -10,10 +10,12 @@ import Foundation
 import CommonCrypto
 
 
-public struct SymmetricKey : KeyType, Encryptable, Decryptable {
+// 对称密钥。 用于加密本地存储的数据。
+public struct SymmetricKey : Encryptable, Decryptable {
   
   public enum Error : ErrorType {
     case EncryptError
+    case DecryptError
   }
   
   
@@ -46,12 +48,11 @@ public struct SymmetricKey : KeyType, Encryptable, Decryptable {
   }
   
   
-  public static func new(options:Options = DefaultOptions) -> SymmetricKey {
-    let data = NSData.randomData(options.keySize)
-    let hmac = NSData.randomData(options.keySize)
-    let iv = NSData.randomIV(kCCBlockSizeAES128)
-    let key = try! SymmetricKey(key: data, hmacKey: hmac, IV:iv)
-    return key
+  public init(options:Options = DefaultOptions) {
+    self.cryptoKey = NSData.randomData(options.keySize)
+    self.IV = NSData.randomIV(kCCBlockSizeAES128)
+    if options.seperateKey == true { self.hmacKey = NSData.randomData(options.keySize) }
+    self.options = options
   }
   
   
@@ -61,38 +62,35 @@ public struct SymmetricKey : KeyType, Encryptable, Decryptable {
     self.hmacKey = hmacKey
     self.options = options
   }
-  
-  
-  public var strength : Int {
-    return 0
-  }
-  
+
   
   public func encrypt(data: NSData) throws -> NSData {
     let encryptedData = NSMutableData(length: data.length + self.options.algoritmBlockSize)!
-    let encryptedMoved = UnsafeMutablePointer<Int>()
-    let result = CCCrypt(CCOperation(kCCEncrypt), self.options.algoritm, self.options.options, self.cryptoKey.bytes, self.cryptoKey.length, self.IV.bytes, data.bytes, data.length, encryptedData.mutableBytes, encryptedData.length, encryptedMoved)
+    var encryptedMoved : Int = 0
+    let result = CCCrypt(CCOperation(kCCEncrypt), self.options.algoritm, self.options.options, self.cryptoKey.bytes, self.cryptoKey.length, self.IV.bytes, data.bytes, data.length, encryptedData.mutableBytes, encryptedData.length, &encryptedMoved)
+    encryptedData.length = encryptedMoved
     if result != CCCryptorStatus(kCCSuccess) { throw Error.EncryptError }
     else { return encryptedData }
   }
   
   
   public func decrypt(data: NSData) throws -> NSData {
-    let decryptedData = NSMutableData(length: data.length - self.options.algoritmBlockSize)!
-    let decryptedMoved = UnsafeMutablePointer<Int>()
-    let result = CCCrypt(CCOperation(kCCDecrypt), self.options.algoritm, self.options.options, self.cryptoKey.bytes, self.cryptoKey.length, self.IV.bytes, data.bytes, data.length, decryptedData.mutableBytes, decryptedData.length, decryptedMoved)
-    if result != Int32(kCCSuccess) { throw Error.EncryptError }
+    let decryptedData = NSMutableData(length: data.length + self.options.algoritmBlockSize)!
+    var decryptedMoved = 0
+    let result = CCCrypt(CCOperation(kCCDecrypt), self.options.algoritm, self.options.options, self.cryptoKey.bytes, self.cryptoKey.length, self.IV.bytes, data.bytes, data.length, decryptedData.mutableBytes, decryptedData.length, &decryptedMoved)
+    decryptedData.length = decryptedMoved
+    if result != CCCryptorStatus(kCCSuccess) { throw Error.DecryptError }
     else { return decryptedData }
   }
   
   
   public func signature(data: NSData) throws -> NSData {
     let hash = data.hash(HashType.SHA256)
-    let macPointer = UnsafeMutablePointer<Void>()
     var key = self.hmacKey
     if key == nil { key = self.cryptoKey }
-    CCHmac(self.options.hmac, key!.bytes, key!.length, hash.bytes, hash.length, macPointer)
-    return NSData(bytes: macPointer, length: Int(CC_SHA256_DIGEST_LENGTH))
+    let signature = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH))!
+    CCHmac(self.options.hmac, key!.bytes, key!.length, hash.bytes, hash.length, signature.mutableBytes)
+    return signature
   }
   
   
@@ -105,5 +103,15 @@ public struct SymmetricKey : KeyType, Encryptable, Decryptable {
       throw error
     }
   }
+  
+  
+//  public func encryptThenMac(data: NSData) throws -> NSData {
+//    return NSData()
+//  }
+//  
+//  
+//  public func verifyThenDecrypt(data: NSData) throws -> NSData {
+//    return NSData()
+//  }
 }
 

@@ -12,25 +12,37 @@ import Keys
 
 class SymmetricKeyTests: XCTestCase {
   
-  var key : SymmetricKey?
-  
-  func testCreateSymmetricKey() {
-    self.key = SymmetricKey.new()
-    print(self.key?.cryptoKey)
-    print(self.key?.hmacKey)
-    print(self.key?.IV)
-    print(self.key?.options)
-    XCTAssertTrue(self.key != nil, "Cannot create symmetric key")
+  func testCreateRandomSymmetricKey() {
+    let key = SymmetricKey()
+    print(key.cryptoKey)
+    print(key.hmacKey)
+    print(key.IV)
+    print(key.options)
   }
   
   
-  func testEncrypt() {
-    let data = "HelloWorld".dataUsingEncoding(NSUTF8StringEncoding)!
+  func testCrypto() {
+    let key = SymmetricKey()
+    let data = "Hello World!".dataUsingEncoding(NSUTF8StringEncoding)!
     do {
-      let encryptedData = try self.key?.encrypt(data)
-      print(encryptedData)
+      let encryptedData = try key.encrypt(data)
+      let decryptedData = try key.decrypt(encryptedData)
+      XCTAssertEqual(data, decryptedData)
     } catch {
-      XCTFail("Cannot encrypt data")
+      XCTFail("Cannot encrypt and decrypt data properly")
+    }
+  }
+  
+  
+  func testSignature() {
+    let key = SymmetricKey()
+    let data = "Hello World!".dataUsingEncoding(NSUTF8StringEncoding)!
+    do {
+      let signature = try key.signature(data)
+      let result = try key.verify(data,signature: signature)
+      XCTAssertTrue(result)
+    } catch {
+      XCTFail("Cannot sign and verify data properly")
     }
   }
 }
