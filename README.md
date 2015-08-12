@@ -17,7 +17,7 @@ Keys 是一个没有学习曲线的数据加密开源框架。 Keys 简化了 Co
 
 Keys 参考了 Agilebits 公司的产品 1Password 提供的公开资料。 若想学习 1Password 的数据加密原理，请访问网站 https://support.1password.com/opvault-design/
 
-Keys 参考了 Apple iMessage 提供的公开资料。若想学习有关 iMessage 的数据加密原理。请访问网站
+Keys 参考了 Apple iMessage 提供的公开资料。若想学习有关 iMessage 的数据加密原理。请打开 PDF https://www.apple.com/business/docs/iOS_Security_Guide.pdf
 
 
 ## 三把 “钥匙”
