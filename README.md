@@ -30,7 +30,7 @@ Keys 由三种不同“钥匙”组成。你需要根据软件的需求，使用
 
 ## 最佳实践
 
-##＃ Carthage
+### Carthage
 
 需要使用 Keys。 请安装 Carthage 并在 Cartfile 内加入
 
