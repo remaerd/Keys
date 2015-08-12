@@ -30,6 +30,14 @@ Keys 由三种不同“钥匙”组成。你需要根据软件的需求，使用
 
 ## 最佳实践
 
+##＃ Carthage
+
+需要使用 Keys。 请安装 Carthage 并在 Cartfile 内加入
+
+```
+	github "remaerd/Keys"
+```
+
 ### 储存在本地的加密数据
 
 用户的数据不应该直接使用密码字串符加密。当你需要加密数据时，你必须使用对称密钥加密用户的数据，再用密码加密对称密钥。 同理，当你需要解密数据时。你需要通过密码解密对称密钥，再用对称密钥解密用户的数据。
@@ -86,10 +94,37 @@ Keys 由三种不同“钥匙”组成。你需要根据软件的需求，使用
 
 当你需要将某些加密数据传输到第三方时，你需要使用非对称密钥。你可以想象一个金库有两把钥匙，一把能够用来将黄金放进金库，一把能够用来取出黄金。当你需要传输数据时，你在本地使用其中一把钥匙加密数据后，你将另一把钥匙和数据传输到另外一个设备，另外一个设备就能够解密你的数据。
 
-## Carthage
+＃＃＃＃ 新建非对称密钥
 
-需要使用 Keys。 请安装 Carthage 并在 Cartfile 内加入
+```swift
+	let keys = AsymmetricKeys()
+	let cryptoKeys = keys.keys // 加密/解密用的一对密钥
+	let validationKeys = key.validationKeys // 验证数据用的一对密钥
+```
 
+每次生成新的非对称密钥。将会同时生成两对密钥。四个钥匙分别负责加密，解密，获得数据签名，验证数据。当传输数据时，你需要将加密后的数据，以及 cryptoKeys 的 publicKey， validationKeys.publicKey 同时发送到数据接收者的设备。
+
+#### 加密数据
+
+```swift
+	let data = "Hello World!".dataUsingEncoding(NSUTF8StringEncoding)!
+	let keys = AsymmetricKeys()
+	let privateKey = keys.keys.privateKey
+	do {
+		let encryptedData = try privateKey.encrypt(data)
+	} catch {
+		print("Cannot encrypt data")
+	}
 ```
-	github "remaerd/Keys"
+
+#### 解密数据
+
+```swift
+	let key = PublicKey(keyData)
+	do {
+		let decryptedData = privateKey.decrypt(data)
+	} catch {
+		print("Cannot decrypt data")
+	}
 ```
+
