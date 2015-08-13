@@ -14,6 +14,7 @@ import CommonCrypto
 public struct AsymmetricKeys {
   
   public enum Error : ErrorType {
+    case CannotCreateSecKeyFromData
     case NotFound
     case DeleteError
   }
@@ -125,8 +126,44 @@ public struct AsymmetricKeys {
 }
 
 
+protocol AsymmetricKeyType {
+  
+  static func secKeyFromData(data:NSData, options:AsymmetricKeys.Options) throws -> SecKey
+}
+
+
+extension AsymmetricKeyType {
+  
+  static func secKeyFromData(data:NSData, options:AsymmetricKeys.Options) throws -> SecKey {
+    
+    let keyPtr = UnsafeMutablePointer<AnyObject?>()
+    
+    let addQuery : CFDictionary = [
+      String(kSecClass) : kSecClassKey,
+      String(kSecAttrKeyType): kSecAttrKeyTypeRSA,
+      String(kSecAttrApplicationTag): "com.zhengxingzhi.keys.temporary",
+      String(kSecReturnRef): true
+    ]
+    
+    let addResult = SecItemAdd(addQuery, keyPtr)
+    if keyPtr.memory == nil || addResult != OSStatus(kCCSuccess) { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
+
+    let deleteQuery : CFDictionary = [
+      String(kSecClass): kSecClassKey,
+      String(kSecMatchItemList): ["com.zhengxingzhi.keys.temporary"],
+      String(kSecMatchLimit): kSecMatchLimitOne
+    ]
+    
+    let deleteResult = SecItemDelete(deleteQuery)
+    if deleteResult != OSStatus(kCCSuccess) { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
+    
+    return keyPtr.memory as! SecKey
+  }
+}
+
+
 // 私钥。 用于加密与获得数据验证码
-public struct PrivateKey : Encryptable {
+public struct PrivateKey : AsymmetricKeyType, Encryptable {
   
   public enum Error : ErrorType {
     case CannotEncryptData
@@ -135,11 +172,21 @@ public struct PrivateKey : Encryptable {
   
   
   public var tag      : String?
-  public let key      : SecKey
-  public let options  : AsymmetricKeys.Options
-
+  public var key      : SecKey
+  public var options  : AsymmetricKeys.Options
   
-  public init(key:SecKey, options: AsymmetricKeys.Options) {
+  
+  public init(data:NSData, options: AsymmetricKeys.Options = AsymmetricKeys.DefaultOptions ) throws {
+    self.options = options
+    do {
+      self.key = try PrivateKey.secKeyFromData(data, options: options)
+    } catch {
+      throw error
+    }
+  }
+  
+  
+  private init(key:SecKey, options: AsymmetricKeys.Options) {
     self.options = options
     self.key = key
   }
@@ -147,7 +194,7 @@ public struct PrivateKey : Encryptable {
 
 
 // 公钥。 用于解密与验证数据
-public struct PublicKey : Decryptable {
+public struct PublicKey : AsymmetricKeyType, Decryptable {
   
   public enum Error : ErrorType {
     case CannotDecryptData
@@ -157,10 +204,20 @@ public struct PublicKey : Decryptable {
   
   public var tag      : String?
   public var key      : SecKey
-  public let options  : AsymmetricKeys.Options
-
+  public var options  : AsymmetricKeys.Options
   
-  public init(key:SecKey, options: AsymmetricKeys.Options) {
+  
+  public init(data:NSData, options: AsymmetricKeys.Options = AsymmetricKeys.DefaultOptions ) throws {
+    self.options = options
+    do {
+      self.key = try PublicKey.secKeyFromData(data, options: options)
+    } catch {
+      throw error
+    }
+  }
+  
+  
+  private init(key:SecKey, options: AsymmetricKeys.Options) {
     self.options = options
     self.key = key
   }
