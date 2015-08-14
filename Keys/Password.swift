@@ -10,7 +10,7 @@ import Foundation
 import CommonCrypto
 
 
-// 密码。 用于加密对对称密钥。 不能直接用于加密数据。
+/// 密码。 用于加密对对称密钥。 不能直接用于加密数据。
 public struct Password {
   
   public enum Error : ErrorType {
@@ -82,7 +82,7 @@ public struct Password {
   }
   
   
-  // 用于加密对称密钥
+  /// 加密对称密钥
   mutating public func encrypt(key:SymmetricKey) throws -> (key: NSData, hmac: NSData?, IV: NSData) {
     do {
       let encryptKey = try self.key.encrypt(key.cryptoKey)
@@ -96,7 +96,7 @@ public struct Password {
   }
   
   
-  // 
+  /// 解密对称密钥
   mutating public func decrypt(key:NSData, hmacKey: NSData?, IV: NSData, options: SymmetricKey.Options = SymmetricKey.DefaultOptions) throws -> SymmetricKey {
     do {
       let keyData = try self.key.decrypt(key)

@@ -1,5 +1,11 @@
-## Keys - 三把数据加密的钥匙
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/remaerd/Keys)
+[![Version](https://img.shields.io/github/release/soffes/Crypto.svg)](https://github.com/remaerd/Keys/releases)
+[![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/remaerd/Keys/blob/master/LICENSE)
+
+
+# Keys - 三把数据加密的钥匙
 *Please help me translate the README documentation. Thanks!*
+
 
 ## 干嘛用
 
@@ -19,6 +25,7 @@ Keys 参考了 Agilebits 公司的产品 1Password 提供的公开资料。 若�
 
 Keys 参考了 Apple iMessage 提供的公开资料。若想学习有关 iMessage 的数据加密原理。请打开 PDF https://www.apple.com/business/docs/iOS_Security_Guide.pdf
 
+Keys 是一套
 
 ## 三把 “钥匙”
 
