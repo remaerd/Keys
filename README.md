@@ -1,6 +1,6 @@
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/remaerd/Keys)
 [![Version](https://img.shields.io/github/release/soffes/Crypto.svg)](https://github.com/remaerd/Keys/releases)
-[![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/remaerd/Keys/blob/master/LICENSE)
+[![License](https://img.shields.io/pypi/l/Django.svg)](https://github.com/remaerd/Keys/blob/master/LICENSE)
 
 
 # Keys - 三把数据加密的钥匙
