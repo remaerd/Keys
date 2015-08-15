@@ -85,7 +85,7 @@ public struct SymmetricKey : Encryptable, Decryptable {
   
   
   public func signature(data: NSData) throws -> NSData {
-    let hash = data.hash(HashType.SHA256)
+    let hash = data.SHA256
     var key = self.hmacKey
     if key == nil { key = self.cryptoKey }
     let signature = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH))!
