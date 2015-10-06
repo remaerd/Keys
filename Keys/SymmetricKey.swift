@@ -14,6 +14,7 @@ import CommonCrypto
 public struct SymmetricKey : Encryptable, Decryptable {
   
   public enum Error : ErrorType {
+    case InvalidKeySize
     case EncryptError
     case DecryptError
   }
@@ -26,11 +27,12 @@ public struct SymmetricKey : Encryptable, Decryptable {
   
   
   public struct Options {
-    let keySize     : Int
-    let seperateKey : Bool
-    let algoritm    : CCAlgorithm
-    let options     : CCOptions
-    let hmac        : CCHmacAlgorithm
+    
+    public let keySize     : Int
+    public let seperateKey : Bool
+    public let algoritm    : CCAlgorithm
+    public let options     : CCOptions
+    public let hmac        : CCHmacAlgorithm
     
     
     public var algoritmBlockSize : Int {
@@ -56,10 +58,21 @@ public struct SymmetricKey : Encryptable, Decryptable {
   }
   
   
-  public init(key: NSData, hmacKey: NSData? = nil, IV: NSData, options: Options = SymmetricKey.DefaultOptions) throws {
-    self.cryptoKey = key
+  public init(key: NSData, IV: NSData = NSData(), options: Options = SymmetricKey.DefaultOptions) throws {
+    if options.seperateKey == true {
+      if key.length / 2 != options.keySize { throw Error.InvalidKeySize }
+      let keySize = key.length / 2
+      let keyData = NSMutableData(length: keySize)!
+      let hmacData = NSMutableData(length: keySize)!
+      key.getBytes(keyData.mutableBytes, length: keySize)
+      key.getBytes(hmacData.mutableBytes, range: NSRange(location: keySize,length: keySize))
+      self.cryptoKey = keyData
+      self.hmacKey = hmacData
+    } else {
+      if key.length != options.keySize { throw Error.InvalidKeySize }
+      self.cryptoKey = key
+    }
     self.IV = IV
-    self.hmacKey = hmacKey
     self.options = options
   }
 

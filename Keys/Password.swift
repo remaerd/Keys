@@ -21,7 +21,8 @@ public struct Password {
   public let salt     : NSData
   public let options  : Options
   public let rounds   : Int
-  public let data     : NSData
+  
+  let data            : NSData
   
   
   public struct Options {
@@ -41,12 +42,7 @@ public struct Password {
   
   
   public lazy var key : SymmetricKey = {
-    let keySize = self.options.keySize / 2
-    let keyData = NSMutableData(length: keySize)!
-    let hmacData = NSMutableData(length: keySize)!
-    self.data.getBytes(keyData.mutableBytes, length: keySize)
-    self.data.getBytes(hmacData.mutableBytes, range: NSRange(location: keySize,length: keySize))
-    return try! SymmetricKey(key: keyData, hmacKey: hmacData, IV: NSData())
+    return try! SymmetricKey(key: self.data, options: SymmetricKey.DefaultOptions)
   }()
   
   
@@ -58,8 +54,6 @@ public struct Password {
   
   
   public init(password:String, salt:NSData = NSData.randomData(Password.DefaultOptions.saltSize), roundCount: Int? = nil, options: Options = Password.DefaultOptions) throws {
-    
-    
     let derivedData = NSMutableData(length: options.keySize)!
     let saltBytes = UnsafePointer<UInt8>(salt.bytes)
     let saltLength = salt.length
@@ -83,13 +77,13 @@ public struct Password {
   
   
   /// 加密对称密钥
-  mutating public func encrypt(key:SymmetricKey) throws -> (key: NSData, hmac: NSData?, IV: NSData) {
+  mutating public func encrypt(key:SymmetricKey) throws -> (key: NSData, IV: NSData) {
     do {
-      let encryptKey = try self.key.encrypt(key.cryptoKey)
-      let IV = try self.key.encrypt(key.IV)
-      var hmacKey : NSData?
-      if key.hmacKey != nil { hmacKey = try self.key.encrypt(key.hmacKey!) }
-      return (encryptKey, hmacKey, IV)
+      let data = NSMutableData(data: key.cryptoKey)
+      if let hmacKey = key.hmacKey { data.appendData(hmacKey) }
+      print(data)
+      let encryptKey = try self.key.encrypt(data)
+      return (encryptKey, key.IV)
     } catch {
       throw error
     }
@@ -97,13 +91,11 @@ public struct Password {
   
   
   /// 解密对称密钥
-  mutating public func decrypt(key:NSData, hmacKey: NSData?, IV: NSData, options: SymmetricKey.Options = SymmetricKey.DefaultOptions) throws -> SymmetricKey {
+  mutating public func decrypt(key:NSData, IV: NSData, options: SymmetricKey.Options = SymmetricKey.DefaultOptions) throws -> SymmetricKey {
     do {
       let keyData = try self.key.decrypt(key)
-      let IVData = try self.key.decrypt(IV)
-      var hmacData : NSData?
-      if hmacKey != nil { hmacData = try self.key.decrypt(hmacKey!) }
-      let symmetricKey = try SymmetricKey(key: keyData, hmacKey: hmacData, IV: IVData, options: options)
+      print(keyData)
+      let symmetricKey = try SymmetricKey(key: keyData, IV: IV, options: options)
       return symmetricKey
     } catch {
       throw error

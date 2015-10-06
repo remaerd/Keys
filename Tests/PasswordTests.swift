@@ -7,7 +7,7 @@
 //
 
 import XCTest
-import Keys
+@testable import Keys
 
 
 class PasswordTests: XCTestCase {
@@ -58,11 +58,11 @@ class PasswordTests: XCTestCase {
   func testWrapSymmetricKey() {
     do {
       let key = SymmetricKey()
+      print(key.cryptoKey)
       var password = try Password(password:"Hello")
       let encryptedKeyData = try password.encrypt(key)
-      print(encryptedKeyData)
-      let decryptedKey = try password.decrypt(encryptedKeyData.key, hmacKey: encryptedKeyData.hmac, IV: encryptedKeyData.IV)
-      print(decryptedKey)
+      let decryptedKey = try password.decrypt(encryptedKeyData.key, IV: encryptedKeyData.IV)
+      print(decryptedKey.cryptoKey)
       XCTAssertTrue(decryptedKey.cryptoKey == key.cryptoKey, "Invalid wrapping symmetric key")
     } catch {
       XCTFail("Cannot wrap symmetric key")
