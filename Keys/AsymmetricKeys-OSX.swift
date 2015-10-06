@@ -26,7 +26,7 @@ public extension PrivateKey {
   
   
   public func signature(data: NSData) throws -> NSData {
-    let hash = data.hash(HashType.SHA256)
+    let hash = data.SHA256
     let error = UnsafeMutablePointer<Unmanaged<CFError>?>()
     let transform = SecSignTransformCreate(self.key, error)
     if transform == nil { throw Error.CannotSignData }
@@ -61,7 +61,7 @@ public extension PublicKey {
   
   
   public func verify(data: NSData, signature: NSData) -> Bool {
-    let hash = data.hash(HashType.SHA256)
+    let hash = data.SHA256
     let error = UnsafeMutablePointer<Unmanaged<CFError>?>()
     let signatureRef = CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(signature.bytes), signature.length)
     let transform = SecVerifyTransformCreate(self.key, signatureRef, error)
