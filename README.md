@@ -142,7 +142,7 @@ Keys 由三种不同“钥匙”组成。你需要根据软件的需求，使用
 
 Swift 客户端获得加密数据和 PrivateKey 后，即可解密数据。
 
-```swift
+swift
 	let data = "Hello World!".dataUsingEncoding(NSUTF8StringEncoding)!
 	let publicKeyData = NSData(contentsOfURL: NSBundle.mainBundle().URLForResource("keys-public", withExtension: "pem")!)!
   let privateKeyData = NSData(contentsOfURL: NSBundle.mainBundle().URLForResource("keys-private", withExtension: "pem")!)!
