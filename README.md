@@ -21,11 +21,10 @@
 
 Keys 是一个没有学习曲线的数据加密开源框架。 Keys 简化了 CommonCrypto 内复杂的参数和接口，帮助你有效地实现数据加密解密功能。
 
-Keys 参考了 Agilebits 公司的产品 1Password 提供的公开资料。 若想学习 1Password 的数据加密原理，请访问网站 https://support.1password.com/opvault-design/
+想深入了解软件如何加密你的数据，我推荐阅读 1Password / iMessage 这两个软件的数据加密原理的相关文档。你亦可以直接使用 Keys 提供的 API 接口， Keys 依据数据加密学的 Best Practice 设计。
 
-Keys 参考了 Apple iMessage 提供的公开资料。若想学习有关 iMessage 的数据加密原理。请打开 PDF https://www.apple.com/business/docs/iOS_Security_Guide.pdf
-
-Keys 是一套
+- 1Password https://support.1password.com/opvault-design/
+- iMessage https://www.apple.com/business/docs/iOS_Security_Guide.pdf
 
 ## 三把 “钥匙”
 
@@ -111,25 +110,49 @@ Keys 由三种不同“钥匙”组成。你需要根据软件的需求，使用
 
 每次生成新的非对称密钥。将会同时生成两对密钥。四个钥匙分别负责加密，解密，获得数据签名，验证数据。当传输数据时，你需要将加密后的数据，以及 cryptoKeys 的 publicKey， validationKeys.publicKey 同时发送到数据接收者的设备。
 
-#### 加密数据
+#### CommonCrypto 秘钥
+
+使用 ｀｀｀AsymmetricKeys()｀｀｀， Keys 会生成一对由 CommonCrypto 生成的 RSA 秘钥，你可以通过这对秘钥分别加密／解密数据。
+
+由 ```AsymmetricKeys``` 生成的秘钥适用于 iOS 设备之间的加密数据传输。若需要在多个设备端（服务器，Android 等），请使用 OpenSSL 生成的 RSA 秘钥。
 
 ```swift
 	let data = "Hello World!".dataUsingEncoding(NSUTF8StringEncoding)!
 	let keys = AsymmetricKeys()
+	let publicKey = keys.keys.publicKey
 	let privateKey = keys.keys.privateKey
 	do {
-		let encryptedData = try privateKey.encrypt(data)
+		let encryptedData = try publicKey.encrypt(data)
+		let decryptedData = try privateKey.decrypt(data)
+		print(NSString(data: decryptedData, encoding: NSUTF8StringEncoding))
+		// Hello World
 	} catch {
 		print("Cannot encrypt data")
 	}
 ```
 
-#### 解密数据
+#### OpenSSL 秘钥
+
+通过 OpenSSL，你可以在服务器端生成 RSA 秘钥，用 PublicKey 加密数据后，将 PrivateKey，以及加密的数据传输到用户客户端。通过以下两段 Terminal.app 代码，你可以生成一对 RSA 秘钥。
+
+```bash
+	openssl genrsa -out private.pem 2048
+	openssl rsa -in private.pem -pubout -out public.pub 
+```
+
+Swift 客户端获得加密数据和 PrivateKey 后，即可解密数据。
 
 ```swift
-	let key = PublicKey(keyData)
+	let data = "Hello World!".dataUsingEncoding(NSUTF8StringEncoding)!
+	let publicKeyData = NSData(contentsOfURL: NSBundle.mainBundle().URLForResource("keys-public", withExtension: "pem")!)!
+  let privateKeyData = NSData(contentsOfURL: NSBundle.mainBundle().URLForResource("keys-private", withExtension: "pem")!)!
 	do {
-		let decryptedData = privateKey.decrypt(data)
+		let publicKey = try PublicKey(publicKey:privateKeyData)
+		let privateKey = try PrivateKey(privateKey:privateKeyData)
+		let encryptedData = try publicKey.encrypt(data)
+		let decryptedData = try privateKey.decrypt(data)
+		print(NSString(data: decryptedData, encoding: NSUTF8StringEncoding))
+		// Hello World
 	} catch {
 		print("Cannot decrypt data")
 	}
