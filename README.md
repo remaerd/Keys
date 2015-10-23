@@ -103,22 +103,22 @@ Keys 由三种不同“钥匙”组成。你需要根据软件的需求，使用
 #### 新建非对称密钥
 
 ```swift
-	let keys = AsymmetricKey.generateKeyPair()
+	let keys = AsymmetricKeys.generateKeyPair()
 	let publicKey = keys.publicKey // 加密/解密用的一对密钥
 	let privateKey = key.privateKey // 验证数据用的一对密钥
 ```
 
-每次生成新的非对称密钥。将会同时生成两对密钥。四个钥匙分别负责加密，解密，获得数据签名，验证数据。当传输数据时，你需要将加密后的数据，以及 cryptoKeys 的 publicKey， validationKeys.publicKey 同时发送到数据接收者的设备。
+每次生成新的非对称密钥，将会获得一对密钥，分别负责加密，解密数据。你亦可以使用 ```AsymmetricKeys.generateKeyPair()``` 同时生成两对秘钥，分别用于加密／解密／签名／验证数据。
 
 #### CommonCrypto 秘钥
 
-使用 ```AsymmetricKey.generateKeyPair()```， Keys 会生成一对由 CommonCrypto 生成的 RSA 秘钥，你可以通过这对秘钥分别加密／解密数据。
+使用 ```AsymmetricKeys.generateKeyPair()```， Keys 会生成一对由 CommonCrypto 生成的 RSA 秘钥，你可以通过这对秘钥分别加密／解密数据。
 
-由 ```AsymmetricKey.generateKeyPair()``` 生成的秘钥适用于 iOS 设备之间的加密数据传输。若需要在多个设备端（服务器，Android 等），请使用 OpenSSL 生成的 RSA 秘钥。
+由 ```AsymmetricKeys.generateKeyPair()``` 生成的秘钥适用于 iOS 设备之间的加密数据传输。若需要在多个设备端（服务器，Android 等），请使用 OpenSSL 生成的 RSA 秘钥。
 
 ```swift
 	let data = "Hello World!".dataUsingEncoding(NSUTF8StringEncoding)!
-	let keys = AsymmetricKey.generateKeyPair()
+	let keys = AsymmetricKeys.generateKeyPair()
 	let publicKey = keys.publicKey
 	let privateKey = keys.privateKey
 	do {
@@ -147,8 +147,8 @@ Swift 客户端获得加密数据和 PrivateKey 后，即可解密数据。
 	let publicKeyData = NSData(contentsOfURL: NSBundle.mainBundle().URLForResource("keys-public", withExtension: "pem")!)!
   let privateKeyData = NSData(contentsOfURL: NSBundle.mainBundle().URLForResource("keys-private", withExtension: "pem")!)!
 	do {
-		let publicKey = try AsymmetricKey(publicKey:privateKeyData)
-		let privateKey = try AsymmetricKey(privateKey:privateKeyData)
+		let publicKey = try PublicKey(publicKey:privateKeyData)
+		let privateKey = try PrivateKey(privateKey:privateKeyData)
 		let encryptedData = try privateKey.encrypt(data)
 		let decryptedData = try publicKey.decrypt(encryptedData)
 		print(NSString(data: decryptedData, encoding: NSUTF8StringEncoding))

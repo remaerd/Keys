@@ -17,9 +17,9 @@ class AsymmetricKeyTests: XCTestCase {
     let privateKeyData = NSData(contentsOfURL: NSBundle(forClass: self.classForCoder).URLForResource("keys-private", withExtension: "pem")!)!
     let secretData = "Hello Me".dataUsingEncoding(NSUTF8StringEncoding)!
     do {
-      let publicKey = try AsymmetricKey(publicKey: publicKeyData)
+      let publicKey = try PublicKey(publicKey: publicKeyData)
       print(publicKey)
-      let privateKey = try AsymmetricKey(privateKey:privateKeyData)
+      let privateKey = try PrivateKey(privateKey: privateKeyData)
       print(privateKey)
       let secret = try publicKey.encrypt(secretData)
       let decryptedSecret = try privateKey.decrypt(secret)
@@ -32,7 +32,7 @@ class AsymmetricKeyTests: XCTestCase {
   
   
   func testAsymmetricKey() {
-    let keys = AsymmetricKey.generateKeyPair()
+    let keys = AsymmetricKeys.generateKeyPair()
     let secretData = "Hello World".dataUsingEncoding(NSUTF8StringEncoding)!
     do {
       let secret = try keys.publicKey.encrypt(secretData)
@@ -49,7 +49,7 @@ class AsymmetricKeyTests: XCTestCase {
     let data = NSData(base64EncodedString: encryptedString, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)!
     let privateKeyData = NSData(contentsOfURL: NSBundle(forClass: self.classForCoder).URLForResource("keys-private", withExtension: "pem")!)!
     do {
-      let privateKey = try AsymmetricKey(privateKey:privateKeyData)
+      let privateKey = try PrivateKey(privateKey:privateKeyData)
       let decryptedData = try privateKey.decrypt(data)
       let decryptedString = NSString(data: decryptedData, encoding: NSUTF8StringEncoding)
       XCTAssertEqual(decryptedString, "Hello World")

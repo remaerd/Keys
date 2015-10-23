@@ -13,6 +13,9 @@ import CommonCrypto
 // 非对称密钥组。 用于加密需要传输到其他设备时用到的数据。
 public struct AsymmetricKeys {
   
+  public typealias Keys = (publicKey:PublicKey, privateKey:PrivateKey)
+  
+  
   public enum Error : ErrorType {
     case CannotCreateSecKeyFromData
     case NotFound
@@ -20,34 +23,25 @@ public struct AsymmetricKeys {
   }
   
   
-  public typealias Keys = (publicKey:PublicKey, privateKey:PrivateKey)
-  
-  
-  public var keys           : Keys
-  public var validationKeys : Keys?
-  var options               : Options
-  
-  
   public struct Options {
-    public let seperateValidationKey  : Bool
-    public let keyType                : CFString
-    public let keySize                : CFNumber
-    public let padding                : SecPadding
-    public let tag                    : String
+    
+    public let keyType  : CFString
+    public let keySize  : CFNumber
+    public let padding  : SecPadding
+    public let tag      : String
     
     
-    public init(tag:String = TemporaryKeyTag, seperateKey:Bool,type:CFString,size:CFNumber, padding: SecPadding) {
-      self.seperateValidationKey = seperateKey
+    public static var Default : Options {
+      return Options(tag: TemporaryKeyTag, type: kSecAttrKeyTypeRSA, size: 2048 ,padding: SecPadding.PKCS1)
+    }
+    
+    
+    public init(tag:String, type:CFString,size:CFNumber, padding: SecPadding) {
       self.tag = tag
       self.keyType = type
       self.keySize = size
       self.padding = padding
     }
-  }
-  
-  
-  public static var DefaultOptions : Options {
-    return Options(seperateKey: true, type: kSecAttrKeyTypeRSA, size: 2048 ,padding: SecPadding.PKCS1)
   }
   
   
@@ -64,22 +58,19 @@ public struct AsymmetricKeys {
   }
   
   
-  public init(options:Options = AsymmetricKeys.DefaultOptions) {
-    self.options = options
-    self.keys = AsymmetricKeys.generateSecKeys(options)
-    if options.seperateValidationKey == true { self.validationKeys = AsymmetricKeys.generateSecKeys(options) }
+  public static func generateKeyPair(options:Options = Options.Default) -> Keys {
+    return AsymmetricKeys.generateSecKeys(options)
   }
   
   
-  private init(keys: Keys, validationKeys: Keys? = nil, options: Options = AsymmetricKeys.DefaultOptions) {
-    self.keys = keys
-    self.validationKeys = validationKeys
-    self.options = options
+  public static func generateKeyPairs(options:Options = Options.Default) -> (cryptoKeys: Keys, validationKeys: Keys) {
+    let cryptoKeys = AsymmetricKeys.generateSecKeys(options)
+    let validationKeys = AsymmetricKeys.generateSecKeys(options)
+    return (cryptoKeys: cryptoKeys, validationKeys: validationKeys)
   }
   
   
-  public static func get(privateTag: String, publicTag: String, validationPrivateTag: String? = nil, validationPublicTag: String? = nil , options: Options = AsymmetricKeys.DefaultOptions) throws -> AsymmetricKeys {
-    
+  public static func get(privateTag: String, publicTag: String, validationPrivateTag: String? = nil, validationPublicTag: String? = nil , options: Options = AsymmetricKeys.Options.Default) throws -> (cryptoKeys: Keys, validationKeys: Keys?) {
     
     func secKeyWithTag(tag:String) throws -> SecKey {
       let query = [
@@ -110,7 +101,7 @@ public struct AsymmetricKeys {
       if let publicT = validationPublicTag, privateT = validationPrivateTag {
         validationKeys = try keysWithTags(privateT, publicTag: publicT)
       }
-      return AsymmetricKeys(keys: keys, validationKeys: validationKeys, options: options)
+      return (cryptoKeys: keys, validationKeys: validationKeys)
     } catch {
       throw error
     }

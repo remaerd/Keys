@@ -10,7 +10,7 @@ import Foundation
 import CommonCrypto
 
 
-public extension AsymmetricKey {
+public extension PublicKey {
   
   public func encrypt(data: NSData) throws -> NSData {
     let dataPointer = UnsafePointer<UInt8>(data.bytes)
@@ -31,7 +31,10 @@ public extension AsymmetricKey {
     let signature = NSData(bytesNoCopy: signaturePointer, length: signatureLength.memory)
     return signature
   }
-  
+}
+
+
+public extension PrivateKey {
   
   public func decrypt(data: NSData) throws -> NSData {
     let dataPointer = UnsafePointer<UInt8>(data.bytes)
@@ -54,7 +57,7 @@ public extension AsymmetricKey {
 }
 
 
-public extension AsymmetricKey {
+public extension AsymmetricKeys {
   
   static func secKeyFromData(data:NSData, publicKey:Bool) throws -> SecKey {
     
@@ -87,7 +90,7 @@ public extension AsymmetricKey {
 }
 
 
-public extension AsymmetricKey {
+public extension PublicKey {
   
   public init(publicKey key: NSData) throws  {
     
@@ -96,17 +99,17 @@ public extension AsymmetricKey {
       var buffer = [UInt8](count:data.length, repeatedValue:0)
       data.getBytes(&buffer, length: data.length)
       var index = 0
-      if buffer[index++] != 0x30 { throw Error.CannotCreateSecKeyFromData }
+      if buffer[index++] != 0x30 { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
       if buffer[index] > 0x80 { index += Int(buffer[index] - UInt8(0x80) + UInt8(1)) } else { index++ }
       
       let seqiod : [UInt8] = [0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00]
-      if memcmp(&buffer, seqiod, 15) == 1 { throw Error.CannotCreateSecKeyFromData }
+      if memcmp(&buffer, seqiod, 15) == 1 { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
       
       index += 15
       
-      if buffer[index++] != 0x03 { throw Error.CannotCreateSecKeyFromData }
+      if buffer[index++] != 0x03 { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
       if buffer[index] > 0x80 { index += Int(buffer[index] - UInt8(0x80) + UInt8(1)) } else { index++ }
-      if buffer[index++] != 0 { throw Error.CannotCreateSecKeyFromData }
+      if buffer[index++] != 0 { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
       
       var noHeaderBuffer = [UInt8](count: data.length - index, repeatedValue: 0)
       data.getBytes(&noHeaderBuffer, range: NSRange(location: index, length: data.length - index))
@@ -117,7 +120,7 @@ public extension AsymmetricKey {
     
     func generatePublicKeyFromData() throws -> SecKey {
       
-      guard var keyString = String(data: key, encoding: NSUTF8StringEncoding) else { throw Error.CannotCreateSecKeyFromData }
+      guard var keyString = String(data: key, encoding: NSUTF8StringEncoding) else { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
       
       if (keyString.hasPrefix("-----BEGIN PUBLIC KEY-----\n") && ( keyString.hasSuffix("-----END PUBLIC KEY-----\n") || keyString.hasSuffix("-----END PUBLIC KEY-----"))) {
         keyString = keyString.stringByReplacingOccurrencesOfString("-----BEGIN PUBLIC KEY-----", withString: "")
@@ -128,23 +131,24 @@ public extension AsymmetricKey {
         keyString = keyString.stringByReplacingOccurrencesOfString(" ", withString: "")
         
         guard let data = NSData(base64EncodedString: keyString, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
-          else {  throw Error.CannotCreateSecKeyFromData }
+          else {  throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
         
         let noHeaderKey = try stripPublicKeyHeader(data)
-        return try AsymmetricKey.secKeyFromData(noHeaderKey, publicKey: true)
+        return try AsymmetricKeys.secKeyFromData(noHeaderKey, publicKey: true)
       }
       
-      throw Error.CannotCreateSecKeyFromData
+      throw AsymmetricKeys.Error.CannotCreateSecKeyFromData
     }
     
-    self.options = Options.Default
+    self.options = AsymmetricKeys.Options.Default
+    self.tag = nil
     do { self.key = try generatePublicKeyFromData() }
     catch { throw error }
   }
 }
 
 
-public extension AsymmetricKey {
+public extension PrivateKey {
   
   public init(privateKey key: NSData) throws {
     
@@ -154,12 +158,12 @@ public extension AsymmetricKey {
       data.getBytes(&buffer, length: data.length)
       
       var index = 22
-      if buffer[index++] != 0x04 { throw Error.CannotCreateSecKeyFromData }
+      if buffer[index++] != 0x04 { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
       var length = buffer[index++]
       let det = length & 0x80
       if det == 0 { length = length & 0x7f } else {
         var byteCount = length & 0x7f
-        if Int(byteCount) + index > data.length { throw Error.CannotCreateSecKeyFromData }
+        if Int(byteCount) + index > data.length { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
         var accum : UInt8 = 0
         var char = buffer[index]
         index += Int(byteCount)
@@ -176,7 +180,7 @@ public extension AsymmetricKey {
     
     func generatePrivateKeyFromData() throws -> SecKey {
       
-      guard var keyString = String(data: key, encoding: NSUTF8StringEncoding) else { throw Error.CannotCreateSecKeyFromData }
+      guard var keyString = String(data: key, encoding: NSUTF8StringEncoding) else { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
       
       if (keyString.hasPrefix("-----BEGIN RSA PRIVATE KEY-----\n") && ( keyString.hasSuffix("-----END RSA PRIVATE KEY-----\n") || keyString.hasSuffix("-----END RSA PRIVATE KEY-----"))) {
         keyString = keyString.stringByReplacingOccurrencesOfString("-----BEGIN RSA PRIVATE KEY-----", withString: "")
@@ -187,15 +191,16 @@ public extension AsymmetricKey {
         keyString = keyString.stringByReplacingOccurrencesOfString(" ", withString: "")
         
         guard let data = NSData(base64EncodedString: keyString, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)
-          else {  throw Error.CannotCreateSecKeyFromData }
+          else {  throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
         
-        return try AsymmetricKey.secKeyFromData(data, publicKey: false)
+        return try AsymmetricKeys.secKeyFromData(data, publicKey: false)
         
-      } else { throw Error.CannotCreateSecKeyFromData }
+      } else { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
     }
     
     
     self.key = try generatePrivateKeyFromData()
-    self.options = Options.Default
+    self.tag = nil
+    self.options = AsymmetricKeys.Options.Default
   }
 }

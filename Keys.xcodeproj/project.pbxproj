@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0343E2D21BDA98F8007C2FD4 /* AsymmetricKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0343E2D11BDA98F8007C2FD4 /* AsymmetricKey.swift */; };
-		0343E2D31BDA98F8007C2FD4 /* AsymmetricKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0343E2D11BDA98F8007C2FD4 /* AsymmetricKey.swift */; };
 		0343E2D51BDA9E04007C2FD4 /* AsymmetricKeys-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03580AC71B75263B00F4AB36 /* AsymmetricKeys-iOS.swift */; };
 		0343E2D61BDAA279007C2FD4 /* AsymmetricKeys-OSX.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B7151C1B78D6E100A15ECF /* AsymmetricKeys-OSX.swift */; };
+		0343E2D71BDAB18D007C2FD4 /* AsymmetricKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B7151E1B7A0A1900A15ECF /* AsymmetricKeys.swift */; };
+		0343E2D81BDAB18E007C2FD4 /* AsymmetricKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B7151E1B7A0A1900A15ECF /* AsymmetricKeys.swift */; };
 		03580AB41B75254C00F4AB36 /* Keys.h in Headers */ = {isa = PBXBuildFile; fileRef = 03580AA01B75250E00F4AB36 /* Keys.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		03580AB51B75254D00F4AB36 /* Keys.h in Headers */ = {isa = PBXBuildFile; fileRef = 03580AA01B75250E00F4AB36 /* Keys.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		03580ABA1B75258200F4AB36 /* CommonCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03580A911B7524B400F4AB36 /* CommonCrypto.framework */; };
@@ -69,7 +69,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0343E2D11BDA98F8007C2FD4 /* AsymmetricKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AsymmetricKey.swift; sourceTree = "<group>"; };
 		03580A7F1B75246100F4AB36 /* CommonCrypto.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CommonCrypto.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		03580A841B75246100F4AB36 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		03580A881B75248200F4AB36 /* CommonCrypto.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CommonCrypto.xcconfig; sourceTree = "<group>"; };
@@ -189,7 +188,6 @@
 				03580ABE1B75262100F4AB36 /* Keys.swift */,
 				03580AC11B75262B00F4AB36 /* Password.swift */,
 				03580AC41B75263500F4AB36 /* SymmetricKey.swift */,
-				0343E2D11BDA98F8007C2FD4 /* AsymmetricKey.swift */,
 				03B7151E1B7A0A1900A15ECF /* AsymmetricKeys.swift */,
 				03580AC71B75263B00F4AB36 /* AsymmetricKeys-iOS.swift */,
 				03B7151C1B78D6E100A15ECF /* AsymmetricKeys-OSX.swift */,
@@ -486,9 +484,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0343E2D21BDA98F8007C2FD4 /* AsymmetricKey.swift in Sources */,
 				03B715191B774B5A00A15ECF /* Hash.swift in Sources */,
 				03580AC51B75263500F4AB36 /* SymmetricKey.swift in Sources */,
+				0343E2D71BDAB18D007C2FD4 /* AsymmetricKeys.swift in Sources */,
 				0343E2D51BDA9E04007C2FD4 /* AsymmetricKeys-iOS.swift in Sources */,
 				03580AC21B75262B00F4AB36 /* Password.swift in Sources */,
 				03580ABF1B75262100F4AB36 /* Keys.swift in Sources */,
@@ -499,9 +497,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0343E2D31BDA98F8007C2FD4 /* AsymmetricKey.swift in Sources */,
 				03B715211B7A0AD700A15ECF /* Hash.swift in Sources */,
 				0343E2D61BDAA279007C2FD4 /* AsymmetricKeys-OSX.swift in Sources */,
+				0343E2D81BDAB18E007C2FD4 /* AsymmetricKeys.swift in Sources */,
 				03580AC61B75263500F4AB36 /* SymmetricKey.swift in Sources */,
 				03580AC31B75262B00F4AB36 /* Password.swift in Sources */,
 				03580AC01B75262100F4AB36 /* Keys.swift in Sources */,
