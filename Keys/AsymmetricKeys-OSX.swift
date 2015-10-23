@@ -10,7 +10,7 @@
 import Security
 
 
-public extension PublicKey {
+public extension AsymmetricKey {
   
   public func encrypt(data: NSData) throws -> NSData {
     let error = UnsafeMutablePointer<Unmanaged<CFError>?>()
@@ -37,10 +37,7 @@ public extension PublicKey {
     if signature == nil { throw Error.CannotSignData }
     return signature!
   }
-}
-
-
-public extension PrivateKey {
+  
   
   public func decrypt(data: NSData) throws -> NSData {
     let error = UnsafeMutablePointer<Unmanaged<CFError>?>()
@@ -71,7 +68,7 @@ public extension PrivateKey {
 }
 
 
-public extension AsymmetricKeys {
+public extension AsymmetricKey {
   
   static func secKeyFromData(data:NSData, publicKey: Bool) throws -> SecKey {
     
@@ -95,22 +92,17 @@ public extension AsymmetricKeys {
 }
 
 
-public extension PublicKey {
+public extension AsymmetricKey {
   
-  public init(publicKey: NSData) throws {
+  public init(publicKey key: NSData) throws {
 
-    self.key = try AsymmetricKeys.secKeyFromData(publicKey, publicKey: true)
-    self.options = AsymmetricKeys.DefaultOptions
-    self.tag = TemporaryKeyTag
+    self.key = try AsymmetricKey.secKeyFromData(key, publicKey: true)
+    self.options = Options.Default
   }
-}
-
-
-public extension PrivateKey {
   
-  public init(privateKey: NSData) throws {
-    self.key = try AsymmetricKeys.secKeyFromData(privateKey, publicKey: false)
-    self.options = AsymmetricKeys.DefaultOptions
-    self.tag = TemporaryKeyTag
+  
+  public init(privateKey key: NSData) throws {
+    self.key = try AsymmetricKey.secKeyFromData(key, publicKey: false)
+    self.options = Options.Default
   }
 }
