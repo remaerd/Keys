@@ -11,6 +11,10 @@ import Foundation
 import CommonCrypto
 
 
+// 用于生成 SecKey 时用到的临时 Keychain 标签
+public var TemporaryKeyTag = "com.zhengxingzhi.keys.temp"
+
+
 /// 密钥强度
 public enum KeyStrength {
   case Weak

@@ -17,6 +17,10 @@
 		03580AC31B75262B00F4AB36 /* Password.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03580AC11B75262B00F4AB36 /* Password.swift */; };
 		03580AC51B75263500F4AB36 /* SymmetricKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03580AC41B75263500F4AB36 /* SymmetricKey.swift */; };
 		03580AC61B75263500F4AB36 /* SymmetricKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03580AC41B75263500F4AB36 /* SymmetricKey.swift */; };
+		037C23B01BD9F4A1001B91D3 /* keys-private.pem in Resources */ = {isa = PBXBuildFile; fileRef = 037C23AE1BD9F4A1001B91D3 /* keys-private.pem */; };
+		037C23B11BD9F4A1001B91D3 /* keys-private.pem in Resources */ = {isa = PBXBuildFile; fileRef = 037C23AE1BD9F4A1001B91D3 /* keys-private.pem */; };
+		037C23B21BD9F4A1001B91D3 /* keys-public.pem in Resources */ = {isa = PBXBuildFile; fileRef = 037C23AF1BD9F4A1001B91D3 /* keys-public.pem */; };
+		037C23B31BD9F4A1001B91D3 /* keys-public.pem in Resources */ = {isa = PBXBuildFile; fileRef = 037C23AF1BD9F4A1001B91D3 /* keys-public.pem */; };
 		03B715191B774B5A00A15ECF /* Hash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B715181B774B5A00A15ECF /* Hash.swift */; };
 		03B7151B1B78D6CE00A15ECF /* AsymmetricKeys-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03580AC71B75263B00F4AB36 /* AsymmetricKeys-iOS.swift */; };
 		03B7151D1B78D6E100A15ECF /* AsymmetricKeys-OSX.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B7151C1B78D6E100A15ECF /* AsymmetricKeys-OSX.swift */; };
@@ -65,6 +69,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		034B93911BD6896B00A0DF69 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = ../../Personal/xingzhi/Application/Xingzhi/Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		03580A7F1B75246100F4AB36 /* CommonCrypto.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CommonCrypto.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		03580A841B75246100F4AB36 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		03580A881B75248200F4AB36 /* CommonCrypto.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CommonCrypto.xcconfig; sourceTree = "<group>"; };
@@ -80,6 +85,8 @@
 		03580AC11B75262B00F4AB36 /* Password.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Password.swift; sourceTree = "<group>"; };
 		03580AC41B75263500F4AB36 /* SymmetricKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SymmetricKey.swift; sourceTree = "<group>"; };
 		03580AC71B75263B00F4AB36 /* AsymmetricKeys-iOS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AsymmetricKeys-iOS.swift"; sourceTree = "<group>"; };
+		037C23AE1BD9F4A1001B91D3 /* keys-private.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "keys-private.pem"; sourceTree = "<group>"; };
+		037C23AF1BD9F4A1001B91D3 /* keys-public.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "keys-public.pem"; sourceTree = "<group>"; };
 		03B715181B774B5A00A15ECF /* Hash.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hash.swift; sourceTree = "<group>"; };
 		03B7151C1B78D6E100A15ECF /* AsymmetricKeys-OSX.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AsymmetricKeys-OSX.swift"; sourceTree = "<group>"; };
 		03B7151E1B7A0A1900A15ECF /* AsymmetricKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AsymmetricKeys.swift; sourceTree = "<group>"; };
@@ -141,12 +148,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		034B93901BD6894F00A0DF69 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				034B93911BD6896B00A0DF69 /* Alamofire.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		03580A731B75245400F4AB36 = {
 			isa = PBXGroup;
 			children = (
 				03580A9F1B75250E00F4AB36 /* Keys */,
 				03580A811B75246100F4AB36 /* CommonCrypto */,
 				03B7155B1B7A481100A15ECF /* Tests */,
+				034B93901BD6894F00A0DF69 /* Frameworks */,
 				03580A801B75246100F4AB36 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -207,6 +223,8 @@
 				03B715751B7A492600A15ECF /* SymmetricKeyTests.swift */,
 				03B715781B7A493800A15ECF /* AsymmetricKeysTests.swift */,
 				03B7155E1B7A481100A15ECF /* Info.plist */,
+				037C23AE1BD9F4A1001B91D3 /* keys-private.pem */,
+				037C23AF1BD9F4A1001B91D3 /* keys-public.pem */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -441,6 +459,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				037C23B11BD9F4A1001B91D3 /* keys-private.pem in Resources */,
+				037C23B31BD9F4A1001B91D3 /* keys-public.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -448,6 +468,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				037C23B01BD9F4A1001B91D3 /* keys-private.pem in Resources */,
+				037C23B21BD9F4A1001B91D3 /* keys-public.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

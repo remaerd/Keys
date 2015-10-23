@@ -10,7 +10,7 @@
 import Security
 
 
-public extension PrivateKey {
+public extension PublicKey {
   
   public func encrypt(data: NSData) throws -> NSData {
     let error = UnsafeMutablePointer<Unmanaged<CFError>?>()
@@ -37,15 +37,10 @@ public extension PrivateKey {
     if signature == nil { throw Error.CannotSignData }
     return signature!
   }
-  
-  
-//  public func encryptThenMac(data: NSData) throws -> NSData {
-//    return NSData()
-//  }
 }
 
 
-public extension PublicKey {
+public extension PrivateKey {
   
   public func decrypt(data: NSData) throws -> NSData {
     let error = UnsafeMutablePointer<Unmanaged<CFError>?>()
@@ -73,10 +68,49 @@ public extension PublicKey {
     if result == true { return true }
     else { return false }
   }
-  
-  
-//  public func verifyThenDecrypt(data: NSData) throws -> NSData {
-//    return NSData()
-//  }
 }
 
+
+public extension AsymmetricKeys {
+  
+  static func secKeyFromData(data:NSData, publicKey: Bool) throws -> SecKey {
+    
+    let query :[String:AnyObject] = [
+      String(kSecClass): kSecClassKey,
+      String(kSecAttrKeyType): kSecAttrKeyTypeRSA,
+      String(kSecAttrApplicationTag): TemporaryKeyTag ]
+    SecItemDelete(query)
+    
+    var result : OSStatus = 0
+    var format : SecExternalFormat = SecExternalFormat.FormatOpenSSL
+    var itemType : SecExternalItemType
+    if publicKey == true { itemType = SecExternalItemType.ItemTypePublicKey }
+    else { itemType = SecExternalItemType.ItemTypePrivateKey }
+    var items : CFArray?
+    result = SecItemImport(data, nil, &format, &itemType, SecItemImportExportFlags.PemArmour, nil, nil, &items)
+    
+    if result != noErr { throw Error.CannotCreateSecKeyFromData }
+    return (items! as [AnyObject])[0] as! SecKey
+  }
+}
+
+
+public extension PublicKey {
+  
+  public init(publicKey: NSData) throws {
+
+    self.key = try AsymmetricKeys.secKeyFromData(publicKey, publicKey: true)
+    self.options = AsymmetricKeys.DefaultOptions
+    self.tag = TemporaryKeyTag
+  }
+}
+
+
+public extension PrivateKey {
+  
+  public init(privateKey: NSData) throws {
+    self.key = try AsymmetricKeys.secKeyFromData(privateKey, publicKey: false)
+    self.options = AsymmetricKeys.DefaultOptions
+    self.tag = TemporaryKeyTag
+  }
+}

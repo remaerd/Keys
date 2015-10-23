@@ -81,7 +81,6 @@ public struct Password {
     do {
       let data = NSMutableData(data: key.cryptoKey)
       if let hmacKey = key.hmacKey { data.appendData(hmacKey) }
-      print(data)
       let encryptKey = try self.key.encrypt(data)
       return (encryptKey, key.IV)
     } catch {
@@ -94,7 +93,6 @@ public struct Password {
   mutating public func decrypt(key:NSData, IV: NSData, options: SymmetricKey.Options = SymmetricKey.DefaultOptions) throws -> SymmetricKey {
     do {
       let keyData = try self.key.decrypt(key)
-      print(keyData)
       let symmetricKey = try SymmetricKey(key: keyData, IV: IV, options: options)
       return symmetricKey
     } catch {

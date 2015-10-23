@@ -20,12 +20,12 @@ public struct AsymmetricKeys {
   }
   
   
-  typealias Keys      = (publicKey:PublicKey, privateKey:PrivateKey)
+  public typealias Keys = (publicKey:PublicKey, privateKey:PrivateKey)
   
   
-  var keys            : Keys
-  var validationKeys  : Keys?
-  var options         : Options
+  public var keys           : Keys
+  public var validationKeys : Keys?
+  var options               : Options
   
   
   public struct Options {
@@ -33,16 +33,28 @@ public struct AsymmetricKeys {
     public let keyType                : CFString
     public let keySize                : CFNumber
     public let padding                : SecPadding
+    public let tag                    : String
+    
+    
+    public init(tag:String = TemporaryKeyTag, seperateKey:Bool,type:CFString,size:CFNumber, padding: SecPadding) {
+      self.seperateValidationKey = seperateKey
+      self.tag = tag
+      self.keyType = type
+      self.keySize = size
+      self.padding = padding
+    }
   }
   
   
   public static var DefaultOptions : Options {
-    return Options(seperateValidationKey: true, keyType: kSecAttrKeyTypeRSA, keySize: 2048 ,padding: SecPadding.PKCS1MD5)
+    return Options(seperateKey: true, type: kSecAttrKeyTypeRSA, size: 2048 ,padding: SecPadding.PKCS1)
   }
   
   
   private static func generateSecKeys(options: Options) -> Keys {
-    let parameters = [String(kSecAttrKeyType):options.keyType, String(kSecAttrKeySizeInBits): options.keySize]
+    let parameters = [String(kSecAttrKeyType):options.keyType,
+                      String(kSecAttrKeySizeInBits): options.keySize,
+                      String(kSecAttrLabel): options.tag]
     var publicKeyPointer : SecKey?
     var privateKeyPointer : SecKey?
     SecKeyGeneratePair(parameters, &publicKeyPointer, &privateKeyPointer)
@@ -126,75 +138,8 @@ public struct AsymmetricKeys {
 }
 
 
-protocol AsymmetricKeyType {
-  
-  static func secKeyFromData(data:NSData, options:AsymmetricKeys.Options) throws -> SecKey
-}
-
-
-extension AsymmetricKeyType {
-  
-  static func secKeyFromData(data:NSData, options:AsymmetricKeys.Options) throws -> SecKey {
-    
-    let keyPtr = UnsafeMutablePointer<AnyObject?>()
-    
-    let addQuery : CFDictionary = [
-      String(kSecClass) : kSecClassKey,
-      String(kSecAttrKeyType): kSecAttrKeyTypeRSA,
-      String(kSecAttrApplicationTag): "com.zhengxingzhi.keys.temporary",
-      String(kSecReturnRef): true
-    ]
-    
-    let addResult = SecItemAdd(addQuery, keyPtr)
-    if keyPtr.memory == nil || addResult != OSStatus(kCCSuccess) { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
-
-    let deleteQuery : CFDictionary = [
-      String(kSecClass): kSecClassKey,
-      String(kSecMatchItemList): ["com.zhengxingzhi.keys.temporary"],
-      String(kSecMatchLimit): kSecMatchLimitOne
-    ]
-    
-    let deleteResult = SecItemDelete(deleteQuery)
-    if deleteResult != OSStatus(kCCSuccess) { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
-    
-    return keyPtr.memory as! SecKey
-  }
-}
-
-
 // 私钥。 用于加密与获得数据验证码
-public struct PrivateKey : AsymmetricKeyType, Encryptable {
-  
-  public enum Error : ErrorType {
-    case CannotEncryptData
-    case CannotSignData
-  }
-  
-  
-  public var tag      : String?
-  public var key      : SecKey
-  public var options  : AsymmetricKeys.Options
-  
-  
-  public init(data:NSData, options: AsymmetricKeys.Options = AsymmetricKeys.DefaultOptions ) throws {
-    self.options = options
-    do {
-      self.key = try PrivateKey.secKeyFromData(data, options: options)
-    } catch {
-      throw error
-    }
-  }
-  
-  
-  private init(key:SecKey, options: AsymmetricKeys.Options) {
-    self.options = options
-    self.key = key
-  }
-}
-
-
-// 公钥。 用于解密与验证数据
-public struct PublicKey : AsymmetricKeyType, Decryptable {
+public struct PrivateKey : Decryptable {
   
   public enum Error : ErrorType {
     case CannotDecryptData
@@ -207,17 +152,28 @@ public struct PublicKey : AsymmetricKeyType, Decryptable {
   public var options  : AsymmetricKeys.Options
   
   
-  public init(data:NSData, options: AsymmetricKeys.Options = AsymmetricKeys.DefaultOptions ) throws {
+  private init(key:SecKey, options: AsymmetricKeys.Options) {
     self.options = options
-    do {
-      self.key = try PublicKey.secKeyFromData(data, options: options)
-    } catch {
-      throw error
-    }
+    self.key = key
+  }
+}
+
+
+// 公钥。 用于解密与验证数据
+public struct PublicKey : Encryptable {
+  
+  public enum Error : ErrorType {
+    case CannotEncryptData
+    case CannotSignData
   }
   
   
-  private init(key:SecKey, options: AsymmetricKeys.Options) {
+  public var tag      : String?
+  public var key      : SecKey!
+  public var options  : AsymmetricKeys.Options
+  
+  
+  init(key:SecKey, options: AsymmetricKeys.Options) {
     self.options = options
     self.key = key
   }

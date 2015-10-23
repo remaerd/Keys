@@ -2,4 +2,54 @@
 <Bucket
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Tests/AsymmetricKeysTests.swift"
+            timestampString = "467285270.586908"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "55"
+            endingLineNumber = "55"
+            landmarkName = "testDecryptNodeJSEncryptedData()"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tests_iOS.AsymmetricKeyTests.testDecryptNodeJSEncryptedData (Tests_iOS.AsymmetricKeyTests)() -&gt; ()"
+                  moduleName = "Tests-iOS"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/remaerd/Documents/Projects/OpenSource/Keys/Tests/AsymmetricKeysTests.swift"
+                  timestampString = "467284482.523654"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "60"
+                  endingLineNumber = "60"
+                  offsetFromSymbolStart = "2630">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tests_iOS.AsymmetricKeyTests.(testDecryptNodeJSEncryptedData (Tests_iOS.AsymmetricKeyTests) -&gt; () -&gt; ()).(implicit closure #2)"
+                  moduleName = "Tests-iOS"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/remaerd/Documents/Projects/OpenSource/Keys/Tests/AsymmetricKeysTests.swift"
+                  timestampString = "467284482.524145"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "60"
+                  endingLineNumber = "60"
+                  offsetFromSymbolStart = "28">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>
