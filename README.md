@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/pypi/l/Django.svg)](https://github.com/remaerd/Keys/blob/master/LICENSE)
 
 
-# Keys - 加密数据的三把钥匙
+# Keys - 三把数据加密的钥匙
 *Please help me translate the README documentation. Thanks!*
 
 
@@ -12,7 +12,7 @@
 ```swift
 	let password = Password("Secret")
 	let key = SymmetricKey()
-	password.encrypt(key)
+	password.encrypt(data)
 	let data = "Hello World!".dataUsingEncoding(NSUTF8StringEncoding)!
 	let encryptedData = key.encrypt(data)
 	let decryptedData = key.decrypt(encryptedData)
