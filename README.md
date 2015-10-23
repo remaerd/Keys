@@ -112,7 +112,7 @@ Keys 由三种不同“钥匙”组成。你需要根据软件的需求，使用
 
 #### CommonCrypto 秘钥
 
-使用 ｀｀｀AsymmetricKeys()｀｀｀， Keys 会生成一对由 CommonCrypto 生成的 RSA 秘钥，你可以通过这对秘钥分别加密／解密数据。
+使用 ```AsymmetricKeys()```， Keys 会生成一对由 CommonCrypto 生成的 RSA 秘钥，你可以通过这对秘钥分别加密／解密数据。
 
 由 ```AsymmetricKeys``` 生成的秘钥适用于 iOS 设备之间的加密数据传输。若需要在多个设备端（服务器，Android 等），请使用 OpenSSL 生成的 RSA 秘钥。
 
@@ -142,7 +142,7 @@ Keys 由三种不同“钥匙”组成。你需要根据软件的需求，使用
 
 Swift 客户端获得加密数据和 PrivateKey 后，即可解密数据。
 
-swift
+```swift
 	let data = "Hello World!".dataUsingEncoding(NSUTF8StringEncoding)!
 	let publicKeyData = NSData(contentsOfURL: NSBundle.mainBundle().URLForResource("keys-public", withExtension: "pem")!)!
   let privateKeyData = NSData(contentsOfURL: NSBundle.mainBundle().URLForResource("keys-private", withExtension: "pem")!)!
