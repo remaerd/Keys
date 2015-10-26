@@ -29,8 +29,8 @@ public protocol Encryptable {
   /// 加密数据
   func encrypt(data:NSData) throws -> NSData
   
-  /// 获得数据验证码
-  func signature(data:NSData) throws -> NSData
+  /// 验证数据
+  func verify(data:NSData, signature: NSData) throws -> Bool
   
   /// 加密数据后嵌入数据验证码
 //  func encryptThenMac(data:NSData) throws -> NSData
@@ -43,8 +43,8 @@ public protocol Decryptable {
   /// 解密数据
   func decrypt(data:NSData) throws -> NSData
   
-  /// 验证数据
-  func verify(data:NSData, signature: NSData) throws -> Bool
+  /// 获得数据验证码
+  func signature(data:NSData) throws -> NSData
   
   /// 验证数据后再解密
 //  func verifyThenDecrypt(data:NSData) throws -> NSData

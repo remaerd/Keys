@@ -16,20 +16,18 @@ public extension PublicKey {
     let dataPointer = UnsafePointer<UInt8>(data.bytes)
     var encryptedDataLength = SecKeyGetBlockSize(self.key)
     var encryptedData = [UInt8](count: Int(encryptedDataLength), repeatedValue: 0)
-    let result = SecKeyEncrypt(self.key, self.options.padding, dataPointer, data.length, &encryptedData, &encryptedDataLength)
+    let result = SecKeyEncrypt(self.key, self.options.cryptoPadding, dataPointer, data.length, &encryptedData, &encryptedDataLength)
     if result != noErr { throw Error.CannotEncryptData }
     return NSData(bytes: encryptedData, length: encryptedDataLength)
   }
   
   
-  public func signature(data: NSData) throws -> NSData {
+  public func verify(data: NSData, signature: NSData) -> Bool {
     let hash = data.SHA256
     let hashPointer = UnsafePointer<UInt8>(hash.bytes)
-    let signaturePointer = UnsafeMutablePointer<UInt8>()
-    let signatureLength = UnsafeMutablePointer<Int>()
-    SecKeyRawSign(self.key, self.options.padding, hashPointer, hash.length, signaturePointer, signatureLength)
-    let signature = NSData(bytesNoCopy: signaturePointer, length: signatureLength.memory)
-    return signature
+    let signaturePointer = UnsafePointer<UInt8>(signature.bytes)
+    let result = SecKeyRawVerify(self.key, self.options.signaturePadding, hashPointer, hash.length, signaturePointer, signature.length)
+    if result != 0 { return false } else { return true }
   }
 }
 
@@ -40,19 +38,19 @@ public extension PrivateKey {
     let dataPointer = UnsafePointer<UInt8>(data.bytes)
     var decryptedDataLength = SecKeyGetBlockSize(self.key)
     var decryptedData = [UInt8](count: Int(decryptedDataLength), repeatedValue: 0)
-    let result = SecKeyDecrypt(self.key, self.options.padding, dataPointer, data.length, &decryptedData, &decryptedDataLength)
+    let result = SecKeyDecrypt(self.key, self.options.cryptoPadding, dataPointer, data.length, &decryptedData, &decryptedDataLength)
     if result != noErr { throw Error.CannotDecryptData }
     return NSData(bytes: decryptedData, length: decryptedDataLength)
   }
   
   
-  public func verify(data: NSData, signature: NSData) -> Bool {
+  public func signature(data: NSData) throws -> NSData {
     let hash = data.SHA256
     let hashPointer = UnsafePointer<UInt8>(hash.bytes)
-    let signaturePointer = UnsafePointer<UInt8>(signature.bytes)
-    let result = SecKeyRawVerify(self.key, self.options.padding, hashPointer, hash.length, signaturePointer, signature.length)
-    if result != 0 { return false }
-    else { return false }
+    var signatureDataLength = SecKeyGetBlockSize(self.key)
+    var signatureData = [UInt8](count: Int(signatureDataLength), repeatedValue: 0)
+    SecKeyRawSign(self.key, self.options.signaturePadding, hashPointer, hash.length, &signatureData, &signatureDataLength)
+    return NSData(bytes: signatureData, length: signatureDataLength)
   }
 }
 
@@ -92,7 +90,7 @@ public extension AsymmetricKeys {
 
 public extension PublicKey {
   
-  public init(publicKey key: NSData) throws  {
+  public init(publicKey key: NSData, options: AsymmetricKeys.Options = AsymmetricKeys.Options.Default) throws {
     
     func stripPublicKeyHeader(data:NSData) throws -> NSData {
       
@@ -140,17 +138,17 @@ public extension PublicKey {
       throw AsymmetricKeys.Error.CannotCreateSecKeyFromData
     }
     
-    self.options = AsymmetricKeys.Options.Default
-    self.tag = nil
     do { self.key = try generatePublicKeyFromData() }
     catch { throw error }
+    self.options = options
+    self.tag = nil
   }
 }
 
 
 public extension PrivateKey {
   
-  public init(privateKey key: NSData) throws {
+  public init(privateKey key: NSData, options: AsymmetricKeys.Options = AsymmetricKeys.Options.Default) throws {
     
     func stripPrivateKeyHeader(data: NSData) throws -> NSData {
       
@@ -200,7 +198,7 @@ public extension PrivateKey {
     
     
     self.key = try generatePrivateKeyFromData()
+    self.options = options
     self.tag = nil
-    self.options = AsymmetricKeys.Options.Default
   }
 }

@@ -57,4 +57,45 @@ class AsymmetricKeyTests: XCTestCase {
       XCTFail()
     }
   }
+  
+  
+  func testSignAndVerify() {
+    let keys = AsymmetricKeys.generateKeyPair()
+    let data = "Hello World".dataUsingEncoding(NSUTF8StringEncoding)!
+    do {
+      let signature = try keys.privateKey.signature(data)
+      XCTAssertTrue(keys.publicKey.verify(data, signature: signature))
+    } catch {
+      XCTFail()
+    }
+  }
+  
+  
+  func testOpenSSLKeySignAndVerify() {
+    let publicKeyData = NSData(contentsOfURL: NSBundle(forClass: self.classForCoder).URLForResource("keys-public", withExtension: "pem")!)!
+    let privateKeyData = NSData(contentsOfURL: NSBundle(forClass: self.classForCoder).URLForResource("keys-private", withExtension: "pem")!)!
+    let secretData = "Hello Me".dataUsingEncoding(NSUTF8StringEncoding)!
+    do {
+      let publicKey = try PublicKey(publicKey: publicKeyData)
+      let privateKey = try PrivateKey(privateKey: privateKeyData)
+      let signature = try privateKey.signature(secretData)
+      XCTAssertTrue(publicKey.verify(secretData, signature: signature))
+    } catch {
+      XCTFail()
+    }
+  }
+  
+  
+  func testVerifyOpenSSLSignedData() {
+    let signatureString = "G2D8bXS/Rfo94JHQIS/QtYTaAPnDqJtUKGC4d5okKDBH5FlCOR9APbBzlinnrT+SxtoNJoWK49bgo2l/J9G85FSSzErJgnGFv2ZVlsVs1Pce5uf71labNc10T8mgk8wOz/i9foCGKtIU920/Xq9HOW/KRXII29yeIAdLnQiNKXV+MG6G/FWgn9TheGwkhTQWqw06igLY+Feau3pgQsPekcvYCM6skGnozJuMCSciIKvlPzHez4sYEPIqSUnWZjEHQmo3HJSAuiUyXaT9mJJ2AJKJHCK7PW5Qdh5CuXARrJt4/6KDAwqd5D+JA2GA0sK8CogPeSAn67/AA3w1H6EenA=="
+    let secretData = "Hello World".dataUsingEncoding(NSUTF8StringEncoding)!
+    let publicKeyData = NSData(contentsOfURL: NSBundle(forClass: self.classForCoder).URLForResource("keys-public", withExtension: "pem")!)!
+    let signatureData = NSData(base64EncodedString: signatureString, options: .IgnoreUnknownCharacters)!
+    do {
+      let publicKey = try PublicKey(publicKey: publicKeyData)
+      XCTAssertTrue(publicKey.verify(secretData, signature: signatureData))
+    } catch {
+      XCTFail()
+    }
+  }
 }

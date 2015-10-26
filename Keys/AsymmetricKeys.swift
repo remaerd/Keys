@@ -25,28 +25,28 @@ public struct AsymmetricKeys {
   
   public struct Options {
     
-    public let keyType  : CFString
-    public let keySize  : CFNumber
-    public let padding  : SecPadding
-    public let tag      : String
+    public let keySize          : CFNumber
+    public let cryptoPadding    : SecPadding
+    public let signaturePadding : SecPadding
+    public let tag              : String
     
     
     public static var Default : Options {
-      return Options(tag: TemporaryKeyTag, type: kSecAttrKeyTypeRSA, size: 2048 ,padding: SecPadding.PKCS1)
+      return Options(tag: TemporaryKeyTag, size: 2048, cryptoPadding: SecPadding.PKCS1, signaturePadding: SecPadding.PKCS1SHA256)
     }
     
     
-    public init(tag:String, type:CFString,size:CFNumber, padding: SecPadding) {
+    public init(tag:String, size:CFNumber, cryptoPadding: SecPadding, signaturePadding: SecPadding) {
       self.tag = tag
-      self.keyType = type
       self.keySize = size
-      self.padding = padding
+      self.cryptoPadding = cryptoPadding
+      self.signaturePadding = signaturePadding
     }
   }
   
   
   private static func generateSecKeys(options: Options) -> Keys {
-    let parameters = [String(kSecAttrKeyType):options.keyType,
+    let parameters = [String(kSecAttrKeyType):kSecAttrKeyTypeRSA,
                       String(kSecAttrKeySizeInBits): options.keySize,
                       String(kSecAttrLabel): options.tag]
     var publicKeyPointer : SecKey?
@@ -164,7 +164,7 @@ public struct PublicKey : Encryptable {
   public var options  : AsymmetricKeys.Options
   
   
-  init(key:SecKey, options: AsymmetricKeys.Options) {
+  private init(key:SecKey, options: AsymmetricKeys.Options) {
     self.options = options
     self.key = key
   }

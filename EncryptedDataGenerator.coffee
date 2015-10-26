@@ -1,9 +1,9 @@
 ursa 	= require('ursa')
 fs 		= require('fs')
 
-publicKey		= ursa.createPublicKey(fs.readFileSync('./keys-public.pem'))
-privateKey	= ursa.createPublicKey(fs.readFileSync('./keys-private.pem'))
-secret 			= publicKey.encrypt('Hello World')
+publicKey		= ursa.createPublicKey(fs.readFileSync('./Tests/keys-public.pem'))
+privateKey	= ursa.createPrivateKey(fs.readFileSync('./Tests/keys-private.pem'))
 
-console.log(secret)
-console.log(privateKey.decrypt(secret, 'base64', 'utf8'))
+signature		= privateKey.hashAndSign('sha256','Hello World','utf8','base64')
+
+console.log(signature)
