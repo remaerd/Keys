@@ -25,17 +25,19 @@ public extension PublicKey {
   }
   
   
-  public func signature(data: NSData) throws -> NSData {
-    let hash = data.SHA256
+  public func verify(data: NSData, signature: NSData) -> Bool {
     let error = UnsafeMutablePointer<Unmanaged<CFError>?>()
-    let transform = SecSignTransformCreate(self.key, error)
-    if transform == nil { throw Error.CannotSignData }
-    let dataRef = CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(hash.bytes), hash.length)
+    let transform = SecVerifyTransformCreate(self.key, signature, error)
+    if error != nil || transform == nil { return false }
+    let dataRef = CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(data.bytes), data.length)
     SecTransformSetAttribute(transform!, kSecTransformInputAttributeName, dataRef, error)
-    if error != nil { throw Error.CannotSignData }
-    let signature = SecTransformExecute(transform!, error) as? NSData
-    if signature == nil { throw Error.CannotSignData }
-    return signature!
+    SecTransformSetAttribute(transform!, kSecPaddingKey, kSecPaddingPKCS1Key, error)
+    SecTransformSetAttribute(transform!, kSecDigestTypeAttribute, kSecDigestSHA1, error)
+    SecTransformSetAttribute(transform!, kSecDigestLengthAttribute, 160, error)
+    if error != nil { return false }
+    let result = SecTransformExecute(transform!, error) as? Bool
+    if result == true { return true }
+    else { return false }
   }
 }
 
@@ -55,18 +57,19 @@ public extension PrivateKey {
   }
   
   
-  public func verify(data: NSData, signature: NSData) -> Bool {
-    let hash = data.SHA256
+  public func signature(data: NSData) throws -> NSData {
     let error = UnsafeMutablePointer<Unmanaged<CFError>?>()
-    let signatureRef = CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(signature.bytes), signature.length)
-    let transform = SecVerifyTransformCreate(self.key, signatureRef, error)
-    if error != nil || transform == nil { return false }
-    let dataRef = CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(hash.bytes), hash.length)
+    let transform = SecSignTransformCreate(self.key, error)
+    if transform == nil { throw Error.CannotSignData }
+    let dataRef = CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(data.bytes), data.length)
     SecTransformSetAttribute(transform!, kSecTransformInputAttributeName, dataRef, error)
-    if error != nil { return false }
-    let result = SecTransformExecute(transform!, error) as? Bool
-    if result == true { return true }
-    else { return false }
+    SecTransformSetAttribute(transform!, kSecPaddingKey, kSecPaddingPKCS1Key, error)
+    SecTransformSetAttribute(transform!, kSecDigestTypeAttribute, kSecDigestSHA1, error)
+    SecTransformSetAttribute(transform!, kSecDigestLengthAttribute, 160, error)
+    if error != nil { throw Error.CannotSignData }
+    let signature = SecTransformExecute(transform!, error) as? NSData
+    if signature == nil { throw Error.CannotSignData }
+    return signature!
   }
 }
 

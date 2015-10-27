@@ -32,7 +32,7 @@ public struct AsymmetricKeys {
     
     
     public static var Default : Options {
-      return Options(tag: TemporaryKeyTag, size: 2048, cryptoPadding: SecPadding.PKCS1, signaturePadding: SecPadding.PKCS1SHA256)
+      return Options(tag: TemporaryKeyTag, size: 2048, cryptoPadding: SecPadding.PKCS1, signaturePadding: SecPadding.PKCS1SHA1)
     }
     
     

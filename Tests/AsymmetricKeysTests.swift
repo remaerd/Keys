@@ -87,7 +87,7 @@ class AsymmetricKeyTests: XCTestCase {
   
   
   func testVerifyOpenSSLSignedData() {
-    let signatureString = "G2D8bXS/Rfo94JHQIS/QtYTaAPnDqJtUKGC4d5okKDBH5FlCOR9APbBzlinnrT+SxtoNJoWK49bgo2l/J9G85FSSzErJgnGFv2ZVlsVs1Pce5uf71labNc10T8mgk8wOz/i9foCGKtIU920/Xq9HOW/KRXII29yeIAdLnQiNKXV+MG6G/FWgn9TheGwkhTQWqw06igLY+Feau3pgQsPekcvYCM6skGnozJuMCSciIKvlPzHez4sYEPIqSUnWZjEHQmo3HJSAuiUyXaT9mJJ2AJKJHCK7PW5Qdh5CuXARrJt4/6KDAwqd5D+JA2GA0sK8CogPeSAn67/AA3w1H6EenA=="
+    let signatureString = "V32BIi/KI3neTd9BCScitCHoI3a6n/AS44DdT3sXy6JdY5+sDLIFhroByRLirUxhI2MO3Zj9mPf2GFVl11K862tawO8BLMZtH28t9ipHIDeFZc2nuMMeAyEm9jhejvj92hidmfZ+r7HGTNKTMdcxJAiHztHopoU2AF0lJkEvuLHc4Yllrg6d/G54AUqRbKz0RFlHwXVL0lgyobKFrLdkH2PwuORglTvOvceUSMm2cM39bqqTxg6n8f9pG3nWt7pXQ2W3lJGYUIhm4JhLDuq96TpRj44UWH4kF3YT1nqnVzF+u3AKhGSiFbcsBkTeAI2M4tTouiE1d+tz/UzlM/1egw=="
     let secretData = "Hello World".dataUsingEncoding(NSUTF8StringEncoding)!
     let publicKeyData = NSData(contentsOfURL: NSBundle(forClass: self.classForCoder).URLForResource("keys-public", withExtension: "pem")!)!
     let signatureData = NSData(base64EncodedString: signatureString, options: .IgnoreUnknownCharacters)!

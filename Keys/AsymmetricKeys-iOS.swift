@@ -23,7 +23,7 @@ public extension PublicKey {
   
   
   public func verify(data: NSData, signature: NSData) -> Bool {
-    let hash = data.SHA256
+    let hash = data.SHA1
     let hashPointer = UnsafePointer<UInt8>(hash.bytes)
     let signaturePointer = UnsafePointer<UInt8>(signature.bytes)
     let result = SecKeyRawVerify(self.key, self.options.signaturePadding, hashPointer, hash.length, signaturePointer, signature.length)
@@ -45,7 +45,7 @@ public extension PrivateKey {
   
   
   public func signature(data: NSData) throws -> NSData {
-    let hash = data.SHA256
+    let hash = data.SHA1
     let hashPointer = UnsafePointer<UInt8>(hash.bytes)
     var signatureDataLength = SecKeyGetBlockSize(self.key)
     var signatureData = [UInt8](count: Int(signatureDataLength), repeatedValue: 0)
