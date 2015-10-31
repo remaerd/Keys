@@ -64,7 +64,8 @@ class AsymmetricKeyTests: XCTestCase {
     let data = "Hello World".dataUsingEncoding(NSUTF8StringEncoding)!
     do {
       let signature = try keys.privateKey.signature(data)
-      XCTAssertTrue(keys.publicKey.verify(data, signature: signature))
+      let result = try keys.publicKey.verify(data, signature: signature)
+      XCTAssertTrue(result)
     } catch {
       XCTFail()
     }
@@ -79,7 +80,8 @@ class AsymmetricKeyTests: XCTestCase {
       let publicKey = try PublicKey(publicKey: publicKeyData)
       let privateKey = try PrivateKey(privateKey: privateKeyData)
       let signature = try privateKey.signature(secretData)
-      XCTAssertTrue(publicKey.verify(secretData, signature: signature))
+      let result = try publicKey.verify(secretData, signature: signature)
+      XCTAssertTrue(result)
     } catch {
       XCTFail()
     }
@@ -93,7 +95,8 @@ class AsymmetricKeyTests: XCTestCase {
     let signatureData = NSData(base64EncodedString: signatureString, options: .IgnoreUnknownCharacters)!
     do {
       let publicKey = try PublicKey(publicKey: publicKeyData)
-      XCTAssertTrue(publicKey.verify(secretData, signature: signatureData))
+      let result = try publicKey.verify(secretData, signature: signatureData)
+      XCTAssertTrue(result)
     } catch {
       XCTFail()
     }

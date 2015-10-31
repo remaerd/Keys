@@ -25,17 +25,18 @@ public extension PublicKey {
   }
   
   
-  public func verify(data: NSData, signature: NSData) -> Bool {
+  public func verify(data: NSData, signature: NSData) throws -> Bool {
     let error = UnsafeMutablePointer<Unmanaged<CFError>?>()
     let transform = SecVerifyTransformCreate(self.key, signature, error)
-    if error != nil || transform == nil { return false }
+    if error != nil || transform == nil { throw error.memory!.takeRetainedValue() as NSError }
     let dataRef = CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(data.bytes), data.length)
     SecTransformSetAttribute(transform!, kSecTransformInputAttributeName, dataRef, error)
     SecTransformSetAttribute(transform!, kSecPaddingKey, kSecPaddingPKCS1Key, error)
     SecTransformSetAttribute(transform!, kSecDigestTypeAttribute, kSecDigestSHA1, error)
     SecTransformSetAttribute(transform!, kSecDigestLengthAttribute, 160, error)
-    if error != nil { return false }
+    if error != nil { throw error.memory!.takeRetainedValue() as NSError }
     let result = SecTransformExecute(transform!, error) as? Bool
+    if error != nil { throw error.memory!.takeRetainedValue() as NSError }
     if result == true { return true }
     else { return false }
   }
