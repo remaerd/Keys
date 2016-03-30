@@ -18,16 +18,16 @@
 	print(decryptedData) // "Hello World!"
 ```
 
-`Keys` is a data encryption framework for iOS / OS X。It's simplifies the most difficult parts of CommonCrypto, so you don't have to deal with those head stretching interfaces by your own.
+`Keys` is a data encryption framework for iOS / OS X. It's simplifies the most difficult parts of CommonCrypto, so you don't have to deal with those head stretching interfaces on your own.
 
-`Keys` is design to work with **Best practice encryption only**. If you are not familar with Master Key encryption and Public Key cncryption, Please read the following materials to learn about how iMessage and 1Password encrypt your data.
+`Keys` is design to work with **Best practice encryption only**. If you are not familiar with Master Key encryption and Public Key cncryption, Please read the following materials to learn about how iMessage and 1Password protect your data.
 
 - 1Password https://support.1password.com/opvault-design/
 - iMessage https://www.apple.com/business/docs/iOS_Security_Guide.pdf
 
 ## Three type of Keys
 
-There're three kind of keys in the framwork. You can use them according to what you are encrypting.
+There're three kind of keys in the framwork. Use them according to what you are encrypting.
 
 - **Symmetric Key** for encrypting / decrypting local data saving in the same device
 - **Asymmetric Keys** for encrypting  / decrypting data need to be transfers between devices or servers.
@@ -46,7 +46,7 @@ Please intall [Carthage](https://github.com/carthage/carthage) then insert the f
 
 ### Encrypting local data
 
-You must **NOT** encrypt data with user's `String` password. When you need to encrypt a piece of data. You need to create a `SymmetricKey` object to encrypt the data. Then create a `Password` object from user's `String` password. Finally, encrypt the `SymmetricKey` object with the `Password`. Encrypting your users's data with `String` password is dangerous and naïve, please never do this.
+When you need to encrypt a piece of data. You need to create a `SymmetricKey` object to encrypt the data. Then, create a `Password` object from users' `String` password. Finally, encrypt the `SymmetricKey` object with the `Password`. Encrypting your users's data with `String` password is consider dangerous and naïve, please never do this. Again, You must **NOT** encrypt data with users' `String` password. 
 
 #### Creating `Password` object
 
@@ -60,7 +60,7 @@ You must **NOT** encrypt data with user's `String` password. When you need to en
 When you create a new `Password` object with `String`. A random `salt` and `rounds` number will be generated with it.
 You need to save the `salt` and `rounds` data locally, or you will create different `Password` object with the same `String`.
 
-Do **NOT** save the `password.data` locally, or hackers will decrypt users' data by decrypting other encryption keys without password.
+Do **NOT** save the `password.data` locally, or hackers will decrypt users' data by decrypting other encryption keys without the password.
 
 #### Creating `SymmetricKey` object
 
@@ -100,7 +100,7 @@ When you are encrypting local data. You will need a `SymmetricKey` object to enc
 
 ### Encrypting data between devices / servers
 
-When you need to encrypt data between devices, 'AsymmetricKeys' is the only option. Imagine there're two keys for one safe. You open the safe with a key and put golds into it. And you give a different key to someone you trust, so he can open the safe with a different key, but he can't put golds into your safe.
+When you need to encrypt data between devices, 'AsymmetricKeys' is the only option. Imagine there're two keys for one safe. You open a safe with a key and put gold into it. And you give a different key to someone you trust, then he can open the safe with a different key, but he can't put gold into your safe.
 
 #### Creating `AsymmetricKeys` object
 
@@ -110,7 +110,7 @@ When you need to encrypt data between devices, 'AsymmetricKeys' is the only opti
 	let privateKey = key.privateKey
 ```
 
-When your create a pair of `AsymmetricKeys`, a `publicKey` and a `privateKey` will be generated. So you can encrypt your data with `publicKey` and decrypt the data with `privateKey`.
+When your create a pair of `AsymmetricKeys`, a `publicKey` and a `privateKey` will be generated. So you can use them to encrypt data, then send the other key and encrypted data to third-parties.
 
 It's a good practice to generate two pair of `AsymmetricKeys`, so you can encrypt / decrypt / sign / validate your data with these four keys.
 
@@ -142,7 +142,7 @@ If you need to transfer encrypted between iOS Device and your servers. Generate 
 	openssl rsa -in private.pem -pubout -out public.pub 
 ```
 
-The iOS Client get the Public Key and encrypted data. So you can decrypt the data with the public key.
+The iOS client get the Public Key and encrypted data. So you can decrypt the data with the public key.
 
 ```swift
 	let data = "Hello World!".dataUsingEncoding(NSUTF8StringEncoding)!
