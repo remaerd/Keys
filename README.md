@@ -3,11 +3,10 @@
 [![License](https://img.shields.io/pypi/l/Django.svg)](https://github.com/remaerd/Keys/blob/master/LICENSE)
 
 
-# Keys - 三把数据加密的钥匙
-*Please help me translate the README documentation. Thanks!*
+# Keys - Keys of data encryption
+[中文介绍](https://github.com/remaerd/Keys/blob/master/README-CHINESE.MD)
 
-
-## 干嘛用
+## Example
 
 ```swift
 	let password = Password("Secret")
@@ -19,42 +18,43 @@
 	print(decryptedData) // "Hello World!"
 ```
 
-Keys 是一个没有学习曲线的数据加密开源框架。 Keys 简化了 CommonCrypto 内复杂的参数和接口，帮助你有效地实现数据加密解密功能。
+`Keys` is a data encryption framework for iOS / OS X。It's simplifies the most difficult parts of CommonCrypto, so you don't have to deal with those head stretching interfaces by your own.
 
-想深入了解软件如何加密你的数据，我推荐阅读 1Password / iMessage 这两个软件的数据加密原理的相关文档。你亦可以直接使用 Keys 提供的 API 接口， Keys 依据数据加密学的 Best Practice 设计。
+`Keys` is design to work with *Best practice* encryption only. If you are not familar with Master Key encryption and Public Key cncryption, Please read the following materials to learn about how iMessage and 1Password encrypt your data.
 
 - 1Password https://support.1password.com/opvault-design/
 - iMessage https://www.apple.com/business/docs/iOS_Security_Guide.pdf
 
-## 三把 “钥匙”
+## Three type of Keys
 
-Keys 由三种不同“钥匙”组成。你需要根据软件的需求，使用不同的“钥匙”加密用户的数据。
-- 对称密钥 / 用于加密数据。由一个随机数据组成。适合加密存储在本地的数据。
-- 非对称密钥 / 用于加密数据。由两个随机数据组成。适合加密需要在互联网上传输的数据。
-- 密码 / 用于加密对称密钥。由字串符和盐（随机数据）组成。不能用于加密数据。
+There're three kind of keys in the framwork. You can use them according to what you are encrypting.
+
+- *Symmetric Key* for encrypting / decrypting local data saving in the same device
+- *Asymmetric Keys* for encrypting  / decrypting data need to be transfers between devices or servers.
+- *Password* for encrypting / decrypting Symmetric Keys
 
 
-## 最佳实践
+## Best practice
 
 ### Carthage
 
-需要使用 Keys。 请安装 Carthage 并在 Cartfile 内加入
+Please intall [Carthage](https://github.com/carthage/carthage) then insert the following code into your `Cartfile`.
 
 ```
 	github "remaerd/Keys"
 ```
 
-### 储存在本地的加密数据
+### Encrypting local data
 
-用户的数据不应该直接使用密码字串符加密。当你需要加密数据时，你必须使用对称密钥加密用户的数据，再用密码加密对称密钥。 同理，当你需要解密数据时。你需要通过密码解密对称密钥，再用对称密钥解密用户的数据。
+You must *not* encrypt data with user's `String` password. When you need to encrypt a piece of data. You need to create a `SymmetricKey` object to encrypt the data. Then create a `Password` object from user's `String` password. Finally, encrypt the `SymmetricKey` object with the `Password`. Encrypting your users's data with `String` password is dangerous and naïve, please never do this.
 
-#### 新建密码
+#### Creating a `Password` object
 
 ```swift
 	let password = Password("Hello")
-	let salt = password.salt // 盐
-	let rounds = password.rounds // Rounds
-	let data = password.data // 由密码和盐计算出来的密钥
+	let salt = password.salt
+	let rounds = password.rounds
+	let data = password.data
 ```
 
 每次新建密码会自动生成一个随机盐和 Round 值。当你使用相同的密码但不同的盐 ／ Round 值生成密码后，新的 Password 不能够解密之前用 Password 加密过的数据。
