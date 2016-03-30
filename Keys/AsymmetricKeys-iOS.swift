@@ -22,7 +22,7 @@ public extension PublicKey {
   }
   
   
-  public func verify(data: NSData, signature: NSData) -> Bool {
+  public func verify(data: NSData, signature: NSData) throws -> Bool {
     let hash = data.SHA1
     let hashPointer = UnsafePointer<UInt8>(hash.bytes)
     let signaturePointer = UnsafePointer<UInt8>(signature.bytes)
@@ -97,17 +97,19 @@ public extension PublicKey {
       var buffer = [UInt8](count:data.length, repeatedValue:0)
       data.getBytes(&buffer, length: data.length)
       var index = 0
-      if buffer[index++] != 0x30 { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
-      if buffer[index] > 0x80 { index += Int(buffer[index] - UInt8(0x80) + UInt8(1)) } else { index++ }
-      
+      if buffer[index] != 0x30 { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
+      index += 1
+      if buffer[index] > 0x80 { index += Int(buffer[index] - UInt8(0x80) + UInt8(1)) } else { index += 1 }
       let seqiod : [UInt8] = [0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00]
       if memcmp(&buffer, seqiod, 15) == 1 { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
       
       index += 15
       
-      if buffer[index++] != 0x03 { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
-      if buffer[index] > 0x80 { index += Int(buffer[index] - UInt8(0x80) + UInt8(1)) } else { index++ }
-      if buffer[index++] != 0 { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
+      if buffer[index] != 0x03 { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
+      index += 1
+      if buffer[index] > 0x80 { index += Int(buffer[index] - UInt8(0x80) + UInt8(1)) } else { index += 1 }
+      if buffer[index] != 0 { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
+      index += 1
       
       var noHeaderBuffer = [UInt8](count: data.length - index, repeatedValue: 0)
       data.getBytes(&noHeaderBuffer, range: NSRange(location: index, length: data.length - index))
@@ -156,8 +158,10 @@ public extension PrivateKey {
       data.getBytes(&buffer, length: data.length)
       
       var index = 22
-      if buffer[index++] != 0x04 { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
-      var length = buffer[index++]
+      if buffer[index] != 0x04 { throw AsymmetricKeys.Error.CannotCreateSecKeyFromData }
+      index += 1
+      var length = buffer[index]
+      index += 1
       let det = length & 0x80
       if det == 0 { length = length & 0x7f } else {
         var byteCount = length & 0x7f
@@ -167,8 +171,8 @@ public extension PrivateKey {
         index += Int(byteCount)
         while byteCount != 0 {
           accum = (accum << 8) + char
-          char++
-          byteCount--
+          char += 1
+          byteCount -= 1
         }
         length = accum
       }

@@ -59,7 +59,7 @@ public extension String {
     let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     var string = ""
     
-    for (var i=0; i < letters.length; i++){
+    for _ in 0 ..< letters.length {
       let index = Int(arc4random_uniform(UInt32(letters.length)))
       let character = String(letters.characterAtIndex(index))
       string += character

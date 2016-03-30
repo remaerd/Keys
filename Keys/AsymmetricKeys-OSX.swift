@@ -13,7 +13,7 @@ import Security
 public extension PublicKey {
   
   public func encrypt(data: NSData) throws -> NSData {
-    let error = UnsafeMutablePointer<Unmanaged<CFError>?>()
+    let error : UnsafeMutablePointer<Unmanaged<CFError>?> = nil
     let transform = SecEncryptTransformCreate(self.key, error)
     if transform.bytes != nil { throw Error.CannotEncryptData }
     let dataRef = CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(data.bytes), data.length)
@@ -26,7 +26,7 @@ public extension PublicKey {
   
   
   public func verify(data: NSData, signature: NSData) throws -> Bool {
-    let error = UnsafeMutablePointer<Unmanaged<CFError>?>()
+    let error : UnsafeMutablePointer<Unmanaged<CFError>?> = nil
     let transform = SecVerifyTransformCreate(self.key, signature, error)
     if error != nil || transform == nil { throw error.memory!.takeRetainedValue() as NSError }
     let dataRef = CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(data.bytes), data.length)
@@ -46,7 +46,7 @@ public extension PublicKey {
 public extension PrivateKey {
   
   public func decrypt(data: NSData) throws -> NSData {
-    let error = UnsafeMutablePointer<Unmanaged<CFError>?>()
+    let error : UnsafeMutablePointer<Unmanaged<CFError>?> = nil
     let transform = SecDecryptTransformCreate(self.key, error)
     if error != nil { throw Error.CannotDecryptData }
     let dataRef = CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(data.bytes), data.length)
@@ -59,7 +59,7 @@ public extension PrivateKey {
   
   
   public func signature(data: NSData) throws -> NSData {
-    let error = UnsafeMutablePointer<Unmanaged<CFError>?>()
+    let error : UnsafeMutablePointer<Unmanaged<CFError>?> = nil
     let transform = SecSignTransformCreate(self.key, error)
     if transform == nil { throw Error.CannotSignData }
     let dataRef = CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(data.bytes), data.length)

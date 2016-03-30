@@ -79,7 +79,7 @@ public struct AsymmetricKeys {
         String(kSecAttrKeyType): kSecAttrKeyTypeRSA,
         String(kSecReturnRef): true
       ]
-      let keyPointer = UnsafeMutablePointer<AnyObject?>()
+      let keyPointer : UnsafeMutablePointer<AnyObject?> = nil
       let result = SecItemCopyMatching(query, keyPointer)
       if result != OSStatus(kCCSuccess) { throw Error.NotFound }
       else { return keyPointer.memory as! SecKey }
