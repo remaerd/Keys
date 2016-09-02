@@ -75,7 +75,7 @@ public extension NSData {
   /// 随机 NSData 数据
   public static func randomData(length:Int) -> NSData {
     let data = NSMutableData(length: length)!
-    SecRandomCopyBytes(kSecRandomDefault, length, UnsafeMutablePointer<UInt8>(data.mutableBytes))
+    _ = SecRandomCopyBytes(kSecRandomDefault, length, UnsafeMutablePointer<UInt8>(data.mutableBytes))
     return data
   }
   
