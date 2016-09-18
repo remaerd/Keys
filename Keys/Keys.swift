@@ -17,9 +17,9 @@ public var TemporaryKeyTag = "com.zhengxingzhi.keys.temp"
 
 /// 密钥强度
 public enum KeyStrength {
-  case Weak
-  case Regular
-  case Strong
+  case weak
+  case regular
+  case strong
 }
 
 
@@ -27,10 +27,10 @@ public enum KeyStrength {
 public protocol Encryptable {
   
   /// 加密数据
-  func encrypt(data:NSData) throws -> NSData
+  func encrypt(_ data:Data) throws -> Data
   
   /// 验证数据
-  func verify(data:NSData, signature: NSData) throws -> Bool
+  func verify(_ data:Data, signature: Data) throws -> Bool
   
   /// 加密数据后嵌入数据验证码
 //  func encryptThenMac(data:NSData) throws -> NSData
@@ -41,10 +41,10 @@ public protocol Encryptable {
 public protocol Decryptable {
   
   /// 解密数据
-  func decrypt(data:NSData) throws -> NSData
+  func decrypt(_ data:Data) throws -> Data
   
   /// 获得数据验证码
-  func signature(data:NSData) throws -> NSData
+  func signature(_ data:Data) throws -> Data
   
   /// 验证数据后再解密
 //  func verifyThenDecrypt(data:NSData) throws -> NSData
@@ -54,14 +54,14 @@ public protocol Decryptable {
 public extension String {
   
   /// 随机字串符
-  public static func randomString(length:Int) -> String {
+  public static func randomString(_ length:Int) -> String {
     
     let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     var string = ""
     
     for _ in 0 ..< letters.length {
       let index = Int(arc4random_uniform(UInt32(letters.length)))
-      let character = String(letters.characterAtIndex(index))
+      let character = String(letters.character(at: index))
       string += character
     }
     
@@ -70,25 +70,16 @@ public extension String {
 }
 
 
-public extension NSData {
-  
+public extension Data
+{
   /// 随机 NSData 数据
-  public static func randomData(length:Int) -> NSData {
-    let data = NSMutableData(length: length)!
-    _ = SecRandomCopyBytes(kSecRandomDefault, length, UnsafeMutablePointer<UInt8>(data.mutableBytes))
+  public static func randomData(_ length:Int) -> Data
+  {
+    var data = Data(count:length)
+    var pointer : UnsafeMutablePointer<UInt8>? = nil
+    data.withUnsafeMutableBytes { (ptr : UnsafeMutablePointer<UInt8>) in pointer = ptr }
+    _ = SecRandomCopyBytes(kSecRandomDefault, length, pointer!)
     return data
-  }
-  
-  
-  /// 对称密钥用的随机 IV 数据
-  public static func randomIV(blockSize : Int) -> NSData {
-    var randomIV : [UInt8] = [UInt8]()
-    var i : Int = 0
-    while i < blockSize {
-      randomIV.append(UInt8(truncatingBitPattern: arc4random_uniform(256)))
-      i += 1
-    }
-    return NSData(bytes: UnsafePointer<Void>(randomIV), length: randomIV.count)
   }
 }
 

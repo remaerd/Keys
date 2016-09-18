@@ -16,10 +16,10 @@ public struct AsymmetricKeys {
   public typealias Keys = (publicKey:PublicKey, privateKey:PrivateKey)
   
   
-  public enum Error : ErrorType {
-    case CannotCreateSecKeyFromData
-    case NotFound
-    case DeleteError
+  public enum Exception : Error {
+    case cannotCreateSecKeyFromData
+    case notFound
+    case deleteError
   }
   
   
@@ -32,7 +32,7 @@ public struct AsymmetricKeys {
     
     
     public static var Default : Options {
-      return Options(tag: TemporaryKeyTag, size: 2048, cryptoPadding: SecPadding.PKCS1, signaturePadding: SecPadding.PKCS1SHA1)
+      return Options(tag: TemporaryKeyTag, size: 2048 as CFNumber, cryptoPadding: SecPadding.PKCS1, signaturePadding: SecPadding.PKCS1SHA1)
     }
     
     
@@ -45,48 +45,50 @@ public struct AsymmetricKeys {
   }
   
   
-  private static func generateSecKeys(options: Options) -> Keys {
-    let parameters = [String(kSecAttrKeyType):kSecAttrKeyTypeRSA,
-                      String(kSecAttrKeySizeInBits): options.keySize,
-                      String(kSecAttrLabel): options.tag]
+  fileprivate static func generateSecKeys(_ options: Options) -> Keys
+  {
+    let parameters = [kSecAttrType as String:kSecAttrKeyTypeRSA,
+                      kSecAttrKeySizeInBits as String: options.keySize,
+                      kSecAttrLabel as String: options.tag] as [String : Any]
     var publicKeyPointer : SecKey?
     var privateKeyPointer : SecKey?
-    SecKeyGeneratePair(parameters, &publicKeyPointer, &privateKeyPointer)
+    SecKeyGeneratePair(parameters as CFDictionary, &publicKeyPointer, &privateKeyPointer)
     let publicKey = PublicKey(key: publicKeyPointer!, options: options)
     let privateKey = PrivateKey(key: privateKeyPointer!, options: options)
     return Keys(publicKey,privateKey)
   }
   
   
-  public static func generateKeyPair(options:Options = Options.Default) -> Keys {
-    return AsymmetricKeys.generateSecKeys(options)
+  public static func generateKeyPair(_ options:Options = Options.Default) -> Keys
+  {
+    return generateSecKeys(options)
   }
   
   
-  public static func generateKeyPairs(options:Options = Options.Default) -> (cryptoKeys: Keys, validationKeys: Keys) {
-    let cryptoKeys = AsymmetricKeys.generateSecKeys(options)
-    let validationKeys = AsymmetricKeys.generateSecKeys(options)
+  public static func generateKeyPairs(_ options:Options = Options.Default) -> (cryptoKeys: Keys, validationKeys: Keys) {
+    let cryptoKeys = generateSecKeys(options)
+    let validationKeys = generateSecKeys(options)
     return (cryptoKeys: cryptoKeys, validationKeys: validationKeys)
   }
   
   
-  public static func get(privateTag: String, publicTag: String, validationPrivateTag: String? = nil, validationPublicTag: String? = nil , options: Options = AsymmetricKeys.Options.Default) throws -> (cryptoKeys: Keys, validationKeys: Keys?) {
+  public static func get(_ privateTag: String, publicTag: String, validationPrivateTag: String? = nil, validationPublicTag: String? = nil , options: Options = Options.Default) throws -> (cryptoKeys: Keys, validationKeys: Keys?) {
     
-    func secKeyWithTag(tag:String) throws -> SecKey {
+    func secKeyWithTag(_ tag:String) throws -> SecKey {
       let query = [
         String(kSecClassKey): kSecClass,
         String(kSecAttrApplicationTag): tag,
         String(kSecAttrKeyType): kSecAttrKeyTypeRSA,
         String(kSecReturnRef): true
-      ]
-      let keyPointer : UnsafeMutablePointer<AnyObject?> = nil
-      let result = SecItemCopyMatching(query, keyPointer)
-      if result != OSStatus(kCCSuccess) { throw Error.NotFound }
-      else { return keyPointer.memory as! SecKey }
+      ] as [String : Any]
+      let keyPointer : UnsafeMutablePointer<AnyObject?>? = nil
+      let result = SecItemCopyMatching(query as CFDictionary, keyPointer)
+      if result != OSStatus(kCCSuccess) { throw Exception.notFound }
+      else { return keyPointer!.pointee as! SecKey }
     }
     
     
-    func keysWithTags(privateTag:String, publicTag:String) throws -> Keys {
+    func keysWithTags(_ privateTag:String, publicTag:String) throws -> Keys {
       let privateKeyRef = try secKeyWithTag(privateTag)
       let publicKeyRef = try secKeyWithTag(publicTag)
       let privateKey = PrivateKey(key: privateKeyRef, options: options)
@@ -98,7 +100,7 @@ public struct AsymmetricKeys {
     do {
       let keys = try keysWithTags(privateTag, publicTag: publicTag)
       var validationKeys : Keys?
-      if let publicT = validationPublicTag, privateT = validationPrivateTag {
+      if let publicT = validationPublicTag, let privateT = validationPrivateTag {
         validationKeys = try keysWithTags(privateT, publicTag: publicT)
       }
       return (cryptoKeys: keys, validationKeys: validationKeys)
@@ -108,7 +110,7 @@ public struct AsymmetricKeys {
   }
   
   
-  public func save(privateTag: String, publicTag: String, validationPrivateTag: String? = nil, validationPublicTag: String? = nil) throws {
+  public func save(_ privateTag: String, publicTag: String, validationPrivateTag: String? = nil, validationPublicTag: String? = nil) throws {
     
   }
   
@@ -118,13 +120,13 @@ public struct AsymmetricKeys {
   }
   
   
-  public static func removeKeyWithTag(tag:String) throws {
+  public static func removeKeyWithTag(_ tag:String) throws {
     let query = [
       String(kSecClassKey): kSecClass,
       String(kSecAttrApplicationTag): tag
-    ]
-    let result = SecItemDelete(query)
-    if result != OSStatus(kCCSuccess) { throw Error.DeleteError }
+    ] as [String : Any]
+    let result = SecItemDelete(query as CFDictionary)
+    if result != OSStatus(kCCSuccess) { throw Exception.deleteError }
   }
 }
 
@@ -132,9 +134,9 @@ public struct AsymmetricKeys {
 // 私钥。 用于加密与获得数据验证码
 public struct PrivateKey : Decryptable {
   
-  public enum Error : ErrorType {
-    case CannotDecryptData
-    case CannotSignData
+  public enum Exception : Error {
+    case cannotDecryptData
+    case cannotSignData
   }
   
   
@@ -143,7 +145,7 @@ public struct PrivateKey : Decryptable {
   public var options  : AsymmetricKeys.Options
   
   
-  private init(key:SecKey, options: AsymmetricKeys.Options) {
+  fileprivate init(key:SecKey, options: AsymmetricKeys.Options) {
     self.options = options
     self.key = key
   }
@@ -153,9 +155,9 @@ public struct PrivateKey : Decryptable {
 // 公钥。 用于解密与验证数据
 public struct PublicKey : Encryptable {
   
-  public enum Error : ErrorType {
-    case CannotEncryptData
-    case CannotSignData
+  public enum Exception : Error {
+    case cannotEncryptData
+    case cannotVerifyData
   }
   
   
@@ -164,7 +166,7 @@ public struct PublicKey : Encryptable {
   public var options  : AsymmetricKeys.Options
   
   
-  private init(key:SecKey, options: AsymmetricKeys.Options) {
+  fileprivate init(key:SecKey, options: AsymmetricKeys.Options) {
     self.options = options
     self.key = key
   }

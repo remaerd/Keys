@@ -13,17 +13,17 @@ import CommonCrypto
 // 对称密钥。 用于加密本地存储的数据。
 public struct SymmetricKey : Encryptable, Decryptable {
   
-  public enum Error : ErrorType {
-    case InvalidKeySize
-    case EncryptError
-    case DecryptError
+  public enum SymmetricKeyError : Error {
+    case invalidKeySize
+    case encryptError
+    case decryptError
   }
   
   
   public let options    : Options
-  public let cryptoKey  : NSData
-  public let IV         : NSData
-  public var hmacKey    : NSData?
+  public let cryptoKey  : Data
+  public let IV         : Data
+  public var hmacKey    : Data?
   
   
   public struct Options {
@@ -51,25 +51,26 @@ public struct SymmetricKey : Encryptable, Decryptable {
   
   
   public init(options:Options = DefaultOptions) {
-    self.cryptoKey = NSData.randomData(options.keySize)
-    self.IV = NSData.randomIV(kCCBlockSizeAES128)
-    if options.seperateKey == true { self.hmacKey = NSData.randomData(options.keySize) }
+    self.cryptoKey = Data.randomData(options.keySize)
+    self.IV = Data.randomData(kCCKeySizeAES128)
+    if options.seperateKey == true { self.hmacKey = Data.randomData(options.keySize) }
     self.options = options
   }
   
   
-  public init(key: NSData, IV: NSData = NSData(), options: Options = SymmetricKey.DefaultOptions) throws {
-    if options.seperateKey == true {
-      if key.length / 2 != options.keySize { throw Error.InvalidKeySize }
-      let keySize = key.length / 2
+  public init(key: Data, IV: Data = Data(), options: Options = SymmetricKey.DefaultOptions) throws {
+    if options.seperateKey == true
+    {
+      if key.count / 2 != options.keySize { throw SymmetricKeyError.invalidKeySize }
+      let keySize = key.count / 2
       let keyData = NSMutableData(length: keySize)!
       let hmacData = NSMutableData(length: keySize)!
-      key.getBytes(keyData.mutableBytes, length: keySize)
-      key.getBytes(hmacData.mutableBytes, range: NSRange(location: keySize,length: keySize))
-      self.cryptoKey = keyData
-      self.hmacKey = hmacData
+      (key as NSData).getBytes(keyData.mutableBytes, length: keySize)
+      (key as NSData).getBytes(hmacData.mutableBytes, range: NSRange(location: keySize,length: keySize))
+      self.cryptoKey = keyData as Data
+      self.hmacKey = hmacData as Data
     } else {
-      if key.length != options.keySize { throw Error.InvalidKeySize }
+      if key.count != options.keySize { throw SymmetricKeyError.invalidKeySize }
       self.cryptoKey = key
     }
     self.IV = IV
@@ -77,37 +78,45 @@ public struct SymmetricKey : Encryptable, Decryptable {
   }
 
   
-  public func encrypt(data: NSData) throws -> NSData {
-    let encryptedData = NSMutableData(length: data.length + self.options.algoritmBlockSize)!
+  public func encrypt(_ data: Data) throws -> Data {
+    let encryptedData = NSMutableData(length: data.count + self.options.algoritmBlockSize)!
     var encryptedMoved : Int = 0
-    let result = CCCrypt(CCOperation(kCCEncrypt), self.options.algoritm, self.options.options, self.cryptoKey.bytes, self.cryptoKey.length, self.IV.bytes, data.bytes, data.length, encryptedData.mutableBytes, encryptedData.length, &encryptedMoved)
+    var keyPointer : UnsafePointer<UInt8>? = nil
+    self.cryptoKey.withUnsafeBytes({ (ptr) in keyPointer = ptr})
+    var ivPointer : UnsafePointer<UInt8>? = nil
+    self.IV.withUnsafeBytes({ (ptr) in ivPointer = ptr})
+    let result = CCCrypt(CCOperation(kCCEncrypt), self.options.algoritm, self.options.options, keyPointer, self.cryptoKey.count, ivPointer, (data as NSData).bytes, data.count, encryptedData.mutableBytes, encryptedData.length, &encryptedMoved)
     encryptedData.length = encryptedMoved
-    if result != CCCryptorStatus(kCCSuccess) { throw Error.EncryptError }
-    else { return encryptedData }
+    if result != CCCryptorStatus(kCCSuccess) { throw SymmetricKeyError.encryptError }
+    else { return encryptedData as Data }
   }
   
   
-  public func decrypt(data: NSData) throws -> NSData {
-    let decryptedData = NSMutableData(length: data.length + self.options.algoritmBlockSize)!
+  public func decrypt(_ data: Data) throws -> Data {
+    let decryptedData = NSMutableData(length: data.count + self.options.algoritmBlockSize)!
     var decryptedMoved = 0
-    let result = CCCrypt(CCOperation(kCCDecrypt), self.options.algoritm, self.options.options, self.cryptoKey.bytes, self.cryptoKey.length, self.IV.bytes, data.bytes, data.length, decryptedData.mutableBytes, decryptedData.length, &decryptedMoved)
+    var keyPointer : UnsafePointer<UInt8>? = nil
+    self.cryptoKey.withUnsafeBytes({ (ptr) in keyPointer = ptr})
+    var ivPointer : UnsafePointer<UInt8>? = nil
+    self.IV.withUnsafeBytes({ (ptr) in ivPointer = ptr})
+    let result = CCCrypt(CCOperation(kCCDecrypt), self.options.algoritm, self.options.options, keyPointer, self.cryptoKey.count, ivPointer, (data as NSData).bytes, data.count, decryptedData.mutableBytes, decryptedData.length, &decryptedMoved)
     decryptedData.length = decryptedMoved
-    if result != CCCryptorStatus(kCCSuccess) { throw Error.DecryptError }
-    else { return decryptedData }
+    if result != CCCryptorStatus(kCCSuccess) { throw SymmetricKeyError.decryptError }
+    else { return decryptedData as Data }
   }
   
   
-  public func signature(data: NSData) throws -> NSData {
+  public func signature(_ data: Data) throws -> Data {
     let hash = data.SHA256
     var key = self.hmacKey
     if key == nil { key = self.cryptoKey }
     let signature = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH))!
-    CCHmac(self.options.hmac, key!.bytes, key!.length, hash.bytes, hash.length, signature.mutableBytes)
-    return signature
+    CCHmac(self.options.hmac, (key! as NSData).bytes, key!.count, (hash as NSData).bytes, hash.count, signature.mutableBytes)
+    return signature as Data
   }
   
   
-  public func verify(data: NSData, signature: NSData) throws -> Bool {
+  public func verify(_ data: Data, signature: Data) throws -> Bool {
     do {
       let signatureData = try self.signature(data)
       if signatureData == signature { return true }

@@ -23,7 +23,7 @@ class SymmetricKeyTests: XCTestCase {
   
   func testCrypto() {
     let key = SymmetricKey()
-    let data = "Hello World!".dataUsingEncoding(NSUTF8StringEncoding)!
+    let data = "Hello World!".data(using: String.Encoding.utf8)!
     do {
       let encryptedData = try key.encrypt(data)
       let decryptedData = try key.decrypt(encryptedData)
@@ -36,7 +36,7 @@ class SymmetricKeyTests: XCTestCase {
   
   func testSignature() {
     let key = SymmetricKey()
-    let data = "Hello World!".dataUsingEncoding(NSUTF8StringEncoding)!
+    let data = "Hello World!".data(using: String.Encoding.utf8)!
     do {
       let signature = try key.signature(data)
       let result = try key.verify(data,signature: signature)

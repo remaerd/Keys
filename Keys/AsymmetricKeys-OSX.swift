@@ -12,31 +12,31 @@ import Security
 
 public extension PublicKey {
   
-  public func encrypt(data: NSData) throws -> NSData {
-    let error : UnsafeMutablePointer<Unmanaged<CFError>?> = nil
+  public func encrypt(_ data: Data) throws -> Data {
+    let error : UnsafeMutablePointer<Unmanaged<CFError>?>? = nil
     let transform = SecEncryptTransformCreate(self.key, error)
-    if transform.bytes != nil { throw Error.CannotEncryptData }
-    let dataRef = CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(data.bytes), data.length)
-    SecTransformSetAttribute(transform, kSecTransformInputAttributeName, dataRef, error)
-    if error != nil { throw Error.CannotEncryptData }
-    let encryptedData = SecTransformExecute(transform, error) as? NSData
-    if encryptedData == nil { throw Error.CannotEncryptData }
+    if transform.bytes != nil { throw Exception.cannotEncryptData }
+    let dataRef = CFDataCreate(kCFAllocatorDefault, (data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count), data.count)
+    SecTransformSetAttribute(transform, kSecTransformInputAttributeName, dataRef!, error)
+    if error != nil { throw Exception.cannotEncryptData }
+    let encryptedData = SecTransformExecute(transform, error) as? Data
+    if encryptedData == nil { throw Exception.cannotEncryptData }
     return encryptedData!
   }
   
   
-  public func verify(data: NSData, signature: NSData) throws -> Bool {
-    let error : UnsafeMutablePointer<Unmanaged<CFError>?> = nil
-    let transform = SecVerifyTransformCreate(self.key, signature, error)
-    if error != nil || transform == nil { throw error.memory!.takeRetainedValue() as NSError }
-    let dataRef = CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(data.bytes), data.length)
-    SecTransformSetAttribute(transform!, kSecTransformInputAttributeName, dataRef, error)
+  public func verify(_ data: Data, signature: Data) throws -> Bool {
+    let error : UnsafeMutablePointer<Unmanaged<CFError>?>? = nil
+    let transform = SecVerifyTransformCreate(self.key, signature as CFData?, error)
+    if error != nil || transform == nil { throw Exception.cannotVerifyData }
+    let dataRef = CFDataCreate(kCFAllocatorDefault, (data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count), data.count)
+    SecTransformSetAttribute(transform!, kSecTransformInputAttributeName, dataRef!, error)
     SecTransformSetAttribute(transform!, kSecPaddingKey, kSecPaddingPKCS1Key, error)
     SecTransformSetAttribute(transform!, kSecDigestTypeAttribute, kSecDigestSHA1, error)
-    SecTransformSetAttribute(transform!, kSecDigestLengthAttribute, 160, error)
-    if error != nil { throw error.memory!.takeRetainedValue() as NSError }
+    SecTransformSetAttribute(transform!, kSecDigestLengthAttribute, 160 as CFTypeRef, error)
+    if error != nil { throw Exception.cannotVerifyData }
     let result = SecTransformExecute(transform!, error) as? Bool
-    if error != nil { throw error.memory!.takeRetainedValue() as NSError }
+    if error != nil { throw Exception.cannotVerifyData }
     if result == true { return true }
     else { return false }
   }
@@ -45,31 +45,31 @@ public extension PublicKey {
 
 public extension PrivateKey {
   
-  public func decrypt(data: NSData) throws -> NSData {
-    let error : UnsafeMutablePointer<Unmanaged<CFError>?> = nil
+  public func decrypt(_ data: Data) throws -> Data {
+    let error : UnsafeMutablePointer<Unmanaged<CFError>?>? = nil
     let transform = SecDecryptTransformCreate(self.key, error)
-    if error != nil { throw Error.CannotDecryptData }
-    let dataRef = CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(data.bytes), data.length)
-    SecTransformSetAttribute(transform, kSecTransformInputAttributeName, dataRef, error)
-    if error != nil { throw Error.CannotDecryptData }
-    let decryptedData = SecTransformExecute(transform, error) as? NSData
-    if decryptedData == nil { throw Error.CannotDecryptData }
+    if error != nil { throw Exception.cannotDecryptData }
+    let dataRef = CFDataCreate(kCFAllocatorDefault, (data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count), data.count)
+    SecTransformSetAttribute(transform, kSecTransformInputAttributeName, dataRef!, error)
+    if error != nil { throw Exception.cannotDecryptData }
+    let decryptedData = SecTransformExecute(transform, error) as? Data
+    if decryptedData == nil { throw Exception.cannotDecryptData }
     return decryptedData!
   }
   
   
-  public func signature(data: NSData) throws -> NSData {
-    let error : UnsafeMutablePointer<Unmanaged<CFError>?> = nil
+  public func signature(_ data: Data) throws -> Data {
+    let error : UnsafeMutablePointer<Unmanaged<CFError>?>? = nil
     let transform = SecSignTransformCreate(self.key, error)
-    if transform == nil { throw Error.CannotSignData }
-    let dataRef = CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(data.bytes), data.length)
-    SecTransformSetAttribute(transform!, kSecTransformInputAttributeName, dataRef, error)
+    if transform == nil { throw Exception.cannotSignData }
+    let dataRef = CFDataCreate(kCFAllocatorDefault, (data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count), data.count)
+    SecTransformSetAttribute(transform!, kSecTransformInputAttributeName, dataRef!, error)
     SecTransformSetAttribute(transform!, kSecPaddingKey, kSecPaddingPKCS1Key, error)
     SecTransformSetAttribute(transform!, kSecDigestTypeAttribute, kSecDigestSHA1, error)
-    SecTransformSetAttribute(transform!, kSecDigestLengthAttribute, 160, error)
-    if error != nil { throw Error.CannotSignData }
-    let signature = SecTransformExecute(transform!, error) as? NSData
-    if signature == nil { throw Error.CannotSignData }
+    SecTransformSetAttribute(transform!, kSecDigestLengthAttribute, 160 as CFTypeRef, error)
+    if error != nil { throw Exception.cannotSignData }
+    let signature = SecTransformExecute(transform!, error) as? Data
+    if signature == nil { throw Exception.cannotSignData }
     return signature!
   }
 }
@@ -77,23 +77,23 @@ public extension PrivateKey {
 
 public extension AsymmetricKeys {
   
-  static func secKeyFromData(data:NSData, publicKey: Bool) throws -> SecKey {
+  static func secKeyFromData(_ data:Data, publicKey: Bool) throws -> SecKey {
     
     let query :[String:AnyObject] = [
       String(kSecClass): kSecClassKey,
       String(kSecAttrKeyType): kSecAttrKeyTypeRSA,
-      String(kSecAttrApplicationTag): TemporaryKeyTag ]
-    SecItemDelete(query)
+      String(kSecAttrApplicationTag): TemporaryKeyTag as AnyObject ]
+    SecItemDelete(query as CFDictionary)
     
     var result : OSStatus = 0
-    var format : SecExternalFormat = SecExternalFormat.FormatOpenSSL
+    var format : SecExternalFormat = SecExternalFormat.formatOpenSSL
     var itemType : SecExternalItemType
-    if publicKey == true { itemType = SecExternalItemType.ItemTypePublicKey }
-    else { itemType = SecExternalItemType.ItemTypePrivateKey }
+    if publicKey == true { itemType = SecExternalItemType.itemTypePublicKey }
+    else { itemType = SecExternalItemType.itemTypePrivateKey }
     var items : CFArray?
-    result = SecItemImport(data, nil, &format, &itemType, SecItemImportExportFlags.PemArmour, nil, nil, &items)
+    result = SecItemImport(data as CFData, nil, &format, &itemType, SecItemImportExportFlags.pemArmour, nil, nil, &items)
     
-    if result != noErr { throw Error.CannotCreateSecKeyFromData }
+    if result != noErr { throw Exception.cannotCreateSecKeyFromData }
     return (items! as [AnyObject])[0] as! SecKey
   }
 }
@@ -101,7 +101,7 @@ public extension AsymmetricKeys {
 
 public extension PublicKey {
   
-  public init(publicKey key: NSData) throws {
+  public init(publicKey key: Data) throws {
     self.key = try AsymmetricKeys.secKeyFromData(key, publicKey: true)
     self.options = AsymmetricKeys.Options.Default
     self.tag = nil
@@ -111,7 +111,7 @@ public extension PublicKey {
 
 public extension PrivateKey {
   
-  public init(privateKey key: NSData) throws {
+  public init(privateKey key: Data) throws {
     self.key = try AsymmetricKeys.secKeyFromData(key, publicKey: false)
     self.options = AsymmetricKeys.Options.Default
     self.tag = nil
