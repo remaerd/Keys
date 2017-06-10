@@ -27,9 +27,9 @@ public struct Password {
   
   public struct Options
   {
-    let saltSize  : Int
-    let PBKDF     : CCPBKDFAlgorithm
-    let PRF       : CCPseudoRandomAlgorithm
+    public let saltSize  : Int
+    public let PBKDF     : CCPBKDFAlgorithm
+    public let PRF       : CCPseudoRandomAlgorithm
   }
   
   
