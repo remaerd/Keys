@@ -24,7 +24,6 @@ class AsymmetricKeyTests: XCTestCase {
       let secret = try publicKey.encrypt(secretData)
       let decryptedSecret = try privateKey.decrypt(secret)
       XCTAssertEqual(secretData, decryptedSecret)
-      print(NSString(data: decryptedSecret, encoding: String.Encoding.utf8.rawValue))
     } catch {
       XCTFail()
     }

@@ -15,7 +15,7 @@ class SymmetricKeyTests: XCTestCase {
   func testCreateRandomSymmetricKey() {
     let key = SymmetricKey()
     print(key.cryptoKey)
-    print(key.hmacKey)
+		XCTAssertNotNil(key.hmacKey)
     print(key.IV)
     print(key.options)
   }

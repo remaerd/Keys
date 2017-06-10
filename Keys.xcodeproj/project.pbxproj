@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0343E2D51BDA9E04007C2FD4 /* AsymmetricKeys-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03580AC71B75263B00F4AB36 /* AsymmetricKeys-iOS.swift */; };
-		0343E2D61BDAA279007C2FD4 /* AsymmetricKeys-OSX.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B7151C1B78D6E100A15ECF /* AsymmetricKeys-OSX.swift */; };
+		0343E2D61BDAA279007C2FD4 /* AsymmetricKeys-macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B7151C1B78D6E100A15ECF /* AsymmetricKeys-macOS.swift */; };
 		0343E2D71BDAB18D007C2FD4 /* AsymmetricKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B7151E1B7A0A1900A15ECF /* AsymmetricKeys.swift */; };
 		0343E2D81BDAB18E007C2FD4 /* AsymmetricKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B7151E1B7A0A1900A15ECF /* AsymmetricKeys.swift */; };
 		03580AB41B75254C00F4AB36 /* Keys.h in Headers */ = {isa = PBXBuildFile; fileRef = 03580AA01B75250E00F4AB36 /* Keys.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -87,9 +87,9 @@
 		037C23AE1BD9F4A1001B91D3 /* keys-private.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "keys-private.pem"; sourceTree = "<group>"; };
 		037C23AF1BD9F4A1001B91D3 /* keys-public.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "keys-public.pem"; sourceTree = "<group>"; };
 		03B715181B774B5A00A15ECF /* Hash.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hash.swift; sourceTree = "<group>"; };
-		03B7151C1B78D6E100A15ECF /* AsymmetricKeys-OSX.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AsymmetricKeys-OSX.swift"; sourceTree = "<group>"; };
+		03B7151C1B78D6E100A15ECF /* AsymmetricKeys-macOS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AsymmetricKeys-macOS.swift"; sourceTree = "<group>"; };
 		03B7151E1B7A0A1900A15ECF /* AsymmetricKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AsymmetricKeys.swift; sourceTree = "<group>"; };
-		03B7155A1B7A481100A15ECF /* Tests-OSX.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests-OSX.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		03B7155A1B7A481100A15ECF /* Tests-macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests-macOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		03B7155C1B7A481100A15ECF /* PasswordTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordTests.swift; sourceTree = "<group>"; };
 		03B7155E1B7A481100A15ECF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		03B715691B7A484500A15ECF /* Tests-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -164,7 +164,7 @@
 				03580A911B7524B400F4AB36 /* CommonCrypto.framework */,
 				03580A9E1B75250E00F4AB36 /* Keys.framework */,
 				03580AAB1B75253000F4AB36 /* Keys.framework */,
-				03B7155A1B7A481100A15ECF /* Tests-OSX.xctest */,
+				03B7155A1B7A481100A15ECF /* Tests-macOS.xctest */,
 				03B715691B7A484500A15ECF /* Tests-iOS.xctest */,
 			);
 			name = Products;
@@ -190,7 +190,7 @@
 				03580AC41B75263500F4AB36 /* SymmetricKey.swift */,
 				03B7151E1B7A0A1900A15ECF /* AsymmetricKeys.swift */,
 				03580AC71B75263B00F4AB36 /* AsymmetricKeys-iOS.swift */,
-				03B7151C1B78D6E100A15ECF /* AsymmetricKeys-OSX.swift */,
+				03B7151C1B78D6E100A15ECF /* AsymmetricKeys-macOS.swift */,
 				03B715181B774B5A00A15ECF /* Hash.swift */,
 				03580ABD1B75261100F4AB36 /* Miscellanous */,
 			);
@@ -255,9 +255,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		03580A7E1B75246100F4AB36 /* CommonCrypto OS X */ = {
+		03580A7E1B75246100F4AB36 /* CommonCrypto macOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 03580A851B75246100F4AB36 /* Build configuration list for PBXNativeTarget "CommonCrypto OS X" */;
+			buildConfigurationList = 03580A851B75246100F4AB36 /* Build configuration list for PBXNativeTarget "CommonCrypto macOS" */;
 			buildPhases = (
 				03580A7A1B75246100F4AB36 /* Sources */,
 				03580A7B1B75246100F4AB36 /* Frameworks */,
@@ -268,7 +268,7 @@
 			);
 			dependencies = (
 			);
-			name = "CommonCrypto OS X";
+			name = "CommonCrypto macOS";
 			productName = CommonCrypto;
 			productReference = 03580A7F1B75246100F4AB36 /* CommonCrypto.framework */;
 			productType = "com.apple.product-type.framework";
@@ -310,9 +310,9 @@
 			productReference = 03580A9E1B75250E00F4AB36 /* Keys.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		03580AAA1B75253000F4AB36 /* Keys OSX */ = {
+		03580AAA1B75253000F4AB36 /* Keys macOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 03580AB01B75253000F4AB36 /* Build configuration list for PBXNativeTarget "Keys OSX" */;
+			buildConfigurationList = 03580AB01B75253000F4AB36 /* Build configuration list for PBXNativeTarget "Keys macOS" */;
 			buildPhases = (
 				03580AA61B75253000F4AB36 /* Sources */,
 				03580AA71B75253000F4AB36 /* Frameworks */,
@@ -324,14 +324,14 @@
 			dependencies = (
 				03580AB91B75257B00F4AB36 /* PBXTargetDependency */,
 			);
-			name = "Keys OSX";
+			name = "Keys macOS";
 			productName = Keys;
 			productReference = 03580AAB1B75253000F4AB36 /* Keys.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		03B715591B7A481100A15ECF /* Tests-OSX */ = {
+		03B715591B7A481100A15ECF /* Tests-macOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 03B715621B7A481100A15ECF /* Build configuration list for PBXNativeTarget "Tests-OSX" */;
+			buildConfigurationList = 03B715621B7A481100A15ECF /* Build configuration list for PBXNativeTarget "Tests-macOS" */;
 			buildPhases = (
 				03B715561B7A481100A15ECF /* Sources */,
 				03B715571B7A481100A15ECF /* Frameworks */,
@@ -342,9 +342,9 @@
 			dependencies = (
 				03B715611B7A481100A15ECF /* PBXTargetDependency */,
 			);
-			name = "Tests-OSX";
+			name = "Tests-macOS";
 			productName = Tests;
-			productReference = 03B7155A1B7A481100A15ECF /* Tests-OSX.xctest */;
+			productReference = 03B7155A1B7A481100A15ECF /* Tests-macOS.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		03B715681B7A484500A15ECF /* Tests-iOS */ = {
@@ -372,7 +372,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0900;
 				TargetAttributes = {
 					03580A7E1B75246100F4AB36 = {
 						CreatedOnToolsVersion = 7.0;
@@ -382,19 +382,19 @@
 					};
 					03580A9D1B75250E00F4AB36 = {
 						CreatedOnToolsVersion = 7.0;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0900;
 					};
 					03580AAA1B75253000F4AB36 = {
 						CreatedOnToolsVersion = 7.0;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0900;
 					};
 					03B715591B7A481100A15ECF = {
 						CreatedOnToolsVersion = 7.0;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0900;
 					};
 					03B715681B7A484500A15ECF = {
 						CreatedOnToolsVersion = 7.0;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0900;
 					};
 				};
 			};
@@ -411,11 +411,11 @@
 			projectRoot = "";
 			targets = (
 				03580A9D1B75250E00F4AB36 /* Keys iOS */,
-				03580AAA1B75253000F4AB36 /* Keys OSX */,
+				03580AAA1B75253000F4AB36 /* Keys macOS */,
 				03580A901B7524B400F4AB36 /* CommonCrypto iOS */,
-				03580A7E1B75246100F4AB36 /* CommonCrypto OS X */,
+				03580A7E1B75246100F4AB36 /* CommonCrypto macOS */,
 				03B715681B7A484500A15ECF /* Tests-iOS */,
-				03B715591B7A481100A15ECF /* Tests-OSX */,
+				03B715591B7A481100A15ECF /* Tests-macOS */,
 			);
 		};
 /* End PBXProject section */
@@ -502,7 +502,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				03B715211B7A0AD700A15ECF /* Hash.swift in Sources */,
-				0343E2D61BDAA279007C2FD4 /* AsymmetricKeys-OSX.swift in Sources */,
+				0343E2D61BDAA279007C2FD4 /* AsymmetricKeys-macOS.swift in Sources */,
 				0343E2D81BDAB18E007C2FD4 /* AsymmetricKeys.swift in Sources */,
 				03580AC61B75263500F4AB36 /* SymmetricKey.swift in Sources */,
 				03580AC31B75262B00F4AB36 /* Password.swift in Sources */,
@@ -540,12 +540,12 @@
 		};
 		03580AB91B75257B00F4AB36 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 03580A7E1B75246100F4AB36 /* CommonCrypto OS X */;
+			target = 03580A7E1B75246100F4AB36 /* CommonCrypto macOS */;
 			targetProxy = 03580AB81B75257B00F4AB36 /* PBXContainerItemProxy */;
 		};
 		03B715611B7A481100A15ECF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 03580AAA1B75253000F4AB36 /* Keys OSX */;
+			target = 03580AAA1B75253000F4AB36 /* Keys macOS */;
 			targetProxy = 03B715601B7A481100A15ECF /* PBXContainerItemProxy */;
 		};
 		03B715701B7A484500A15ECF /* PBXTargetDependency */ = {
@@ -559,12 +559,18 @@
 		03580A781B75245400F4AB36 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -586,12 +592,18 @@
 		03580A791B75245400F4AB36 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -657,7 +669,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.zhengxingzhi.commoncrypto-osx";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.zhengxingzhi.commoncrypto-macos";
 				PRODUCT_NAME = CommonCrypto;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -708,7 +720,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.zhengxingzhi.commoncrypto-osx";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.zhengxingzhi.commoncrypto-macos";
 				PRODUCT_NAME = CommonCrypto;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -877,7 +889,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -927,7 +940,8 @@
 				PRODUCT_NAME = Keys;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -982,12 +996,13 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.zhengxingzhi.keys-osx";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.zhengxingzhi.keys-macos";
 				PRODUCT_NAME = Keys;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1033,11 +1048,12 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.zhengxingzhi.keys-osx";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.zhengxingzhi.keys-macos";
 				PRODUCT_NAME = Keys;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1084,11 +1100,12 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.zhengxingzhi.Tests-OSX";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.zhengxingzhi.Tests-macOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -1126,10 +1143,11 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.zhengxingzhi.Tests-OSX";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.zhengxingzhi.Tests-macOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -1177,7 +1195,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -1217,7 +1236,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.zhengxingzhi.Tests-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1234,7 +1254,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		03580A851B75246100F4AB36 /* Build configuration list for PBXNativeTarget "CommonCrypto OS X" */ = {
+		03580A851B75246100F4AB36 /* Build configuration list for PBXNativeTarget "CommonCrypto macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				03580A861B75246100F4AB36 /* Debug */,
@@ -1261,7 +1281,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		03580AB01B75253000F4AB36 /* Build configuration list for PBXNativeTarget "Keys OSX" */ = {
+		03580AB01B75253000F4AB36 /* Build configuration list for PBXNativeTarget "Keys macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				03580AB11B75253000F4AB36 /* Debug */,
@@ -1270,7 +1290,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		03B715621B7A481100A15ECF /* Build configuration list for PBXNativeTarget "Tests-OSX" */ = {
+		03B715621B7A481100A15ECF /* Build configuration list for PBXNativeTarget "Tests-macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				03B715631B7A481100A15ECF /* Debug */,

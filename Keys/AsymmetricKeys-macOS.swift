@@ -1,5 +1,5 @@
 //
-//  AsymmetricKeys-OSX.swift
+//  AsymmetricKeys-macOS.swift
 //  Keys
 //
 //  Created by Sean Cheng on 8/10/15.
