@@ -12,7 +12,7 @@ import CommonCrypto
 
 public extension PublicKey {
   
-  public func encrypt(_ data: Data) throws -> Data {
+	func encrypt(_ data: Data) throws -> Data {
     let dataPointer = (data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count)
     var encryptedDataLength = SecKeyGetBlockSize(self.key)
     var encryptedData = [UInt8](repeating: 0, count: Int(encryptedDataLength))
@@ -22,7 +22,7 @@ public extension PublicKey {
   }
   
   
-  public func verify(_ data: Data, signature: Data) throws -> Bool {
+	func verify(_ data: Data, signature: Data) throws -> Bool {
     let hash = data.SHA1
     var result : OSStatus
     var pointer : UnsafePointer<UInt8>? = nil
@@ -36,7 +36,7 @@ public extension PublicKey {
 
 public extension PrivateKey {
   
-  public func decrypt(_ data: Data) throws -> Data {
+	func decrypt(_ data: Data) throws -> Data {
     let dataPointer = (data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count)
     var decryptedDataLength = SecKeyGetBlockSize(self.key)
     var decryptedData = [UInt8](repeating: 0, count: Int(decryptedDataLength))
@@ -46,7 +46,7 @@ public extension PrivateKey {
   }
   
   
-  public func signature(_ data: Data) throws -> Data {
+	func signature(_ data: Data) throws -> Data {
     let hash = data.SHA1
     var signatureDataLength = SecKeyGetBlockSize(self.key)
     var signatureData = [UInt8](repeating: 0, count: Int(signatureDataLength))
@@ -121,7 +121,7 @@ public extension AsymmetricKeys {
 
 public extension PublicKey {
   
-  public init(publicKey key: Data, options: AsymmetricKeys.Options = AsymmetricKeys.Options.Default) throws {
+	init(publicKey key: Data, options: AsymmetricKeys.Options = AsymmetricKeys.Options.Default) throws {
     
     func stripPublicKeyHeader(_ data:Data) throws -> Data {
       
@@ -180,7 +180,7 @@ public extension PublicKey {
 
 public extension PrivateKey {
   
-  public init(privateKey key: Data, options: AsymmetricKeys.Options = AsymmetricKeys.Options.Default) throws {
+	init(privateKey key: Data, options: AsymmetricKeys.Options = AsymmetricKeys.Options.Default) throws {
     
     func stripPrivateKeyHeader(_ data: Data) throws -> Data {
       

@@ -54,7 +54,7 @@ public protocol Decryptable {
 public extension String {
   
   /// 随机字串符
-  public static func randomString(_ length:Int) -> String {
+  static func randomString(_ length:Int) -> String {
     
     let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     var string = ""
@@ -73,7 +73,7 @@ public extension String {
 public extension Data
 {
   /// 随机 NSData 数据
-  public static func randomData(_ length:Int) -> Data
+  static func randomData(_ length:Int) -> Data
   {
     var data = Data(count:length)
     var pointer : UnsafeMutablePointer<UInt8>? = nil

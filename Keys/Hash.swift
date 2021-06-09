@@ -12,117 +12,117 @@ import CommonCrypto
 
 public extension Data {
   
-  public var MD2: Data {
+	var MD2: Data {
     var hash = [UInt8](repeating: 0, count: Int(CC_MD2_DIGEST_LENGTH))
-    var pointer : UnsafePointer<UInt8>? = nil
-    withUnsafeBytes({ (ptr) in pointer = ptr})
-    CC_MD2(pointer, CC_LONG(count), &hash)
-    return Data(bytes: UnsafePointer<UInt8>(hash), count: Int(CC_MD2_DIGEST_LENGTH))
+		var pointer : UnsafeRawPointer? = nil
+		withUnsafeBytes({ (ptr) in pointer = ptr.baseAddress })
+		CC_MD2(pointer, CC_LONG(count), &hash)
+		return Data(bytes: pointer!, count: Int(CC_MD2_DIGEST_LENGTH))
   }
   
   
-  public var MD4: Data {
+	var MD4: Data {
     var hash = [UInt8](repeating: 0, count: Int(CC_MD4_DIGEST_LENGTH))
-    var pointer : UnsafePointer<UInt8>? = nil
-    withUnsafeBytes({ (ptr) in pointer = ptr})
+		var pointer : UnsafeRawPointer? = nil
+		withUnsafeBytes({ (ptr) in pointer = ptr.baseAddress })
     CC_MD4(pointer, CC_LONG(count), &hash)
-    return Data(bytes: UnsafePointer<UInt8>(hash), count: Int(CC_MD4_DIGEST_LENGTH))
+		return Data(bytes: pointer!, count: Int(CC_MD4_DIGEST_LENGTH))
   }
   
   
-  public var MD5: Data {
+	var MD5: Data {
     var hash = [UInt8](repeating: 0, count: Int(CC_MD5_DIGEST_LENGTH))
-    var pointer : UnsafePointer<UInt8>? = nil
-    withUnsafeBytes({ (ptr) in pointer = ptr})
+		var pointer : UnsafeRawPointer? = nil
+		withUnsafeBytes({ (ptr) in pointer = ptr.baseAddress })
     CC_MD5(pointer, CC_LONG(count), &hash)
-    return Data(bytes: UnsafePointer<UInt8>(hash), count: Int(CC_MD5_DIGEST_LENGTH))
+		return Data(bytes: pointer!, count: Int(CC_MD5_DIGEST_LENGTH))
   }
   
   
-  public var SHA1: Data {
+	var SHA1: Data {
     var hash = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
-    var pointer : UnsafePointer<UInt8>? = nil
-    withUnsafeBytes({ (ptr) in pointer = ptr})
+		var pointer : UnsafeRawPointer? = nil
+		withUnsafeBytes({ (ptr) in pointer = ptr.baseAddress })
     CC_SHA1(pointer, CC_LONG(count), &hash)
-    return Data(bytes: UnsafePointer<UInt8>(hash), count: Int(CC_SHA1_DIGEST_LENGTH))
+		return Data(bytes: pointer!, count: Int(CC_SHA1_DIGEST_LENGTH))
   }
   
   
-  public var SHA224: Data {
+	var SHA224: Data {
     var hash = [UInt8](repeating: 0, count: Int(CC_SHA224_DIGEST_LENGTH))
-    var pointer : UnsafePointer<UInt8>? = nil
-    withUnsafeBytes({ (ptr) in pointer = ptr})
+		var pointer : UnsafeRawPointer? = nil
+		withUnsafeBytes({ (ptr) in pointer = ptr.baseAddress })
     CC_SHA224(pointer, CC_LONG(count), &hash)
-    return Data(bytes: UnsafePointer<UInt8>(hash), count: Int(CC_SHA224_DIGEST_LENGTH))
+		return Data(bytes: pointer!, count: Int(CC_SHA224_DIGEST_LENGTH))
   }
   
   
-  public var SHA256: Data {
+	var SHA256: Data {
     var hash = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
-    var pointer : UnsafePointer<UInt8>? = nil
-    withUnsafeBytes({ (ptr) in pointer = ptr})
+		var pointer : UnsafeRawPointer? = nil
+		withUnsafeBytes({ (ptr) in pointer = ptr.baseAddress })
     CC_SHA256(pointer, CC_LONG(count), &hash)
-    return Data(bytes: UnsafePointer<UInt8>(hash), count: Int(CC_SHA256_DIGEST_LENGTH))
+		return Data(bytes: pointer!, count: Int(CC_SHA256_DIGEST_LENGTH))
   }
   
   
-  public var SHA384: Data {
+	var SHA384: Data {
     var hash = [UInt8](repeating: 0, count: Int(CC_SHA384_DIGEST_LENGTH))
-    var pointer : UnsafePointer<UInt8>? = nil
-    withUnsafeBytes({ (ptr) in pointer = ptr})
+		var pointer : UnsafeRawPointer? = nil
+		withUnsafeBytes({ (ptr) in pointer = ptr.baseAddress })
     CC_SHA384(pointer, CC_LONG(count), &hash)
-    return Data(bytes: UnsafePointer<UInt8>(hash), count: Int(CC_SHA384_DIGEST_LENGTH))
+		return Data(bytes: pointer!, count: Int(CC_SHA384_DIGEST_LENGTH))
   }
   
   
-  public var SHA512: Data {
+	var SHA512: Data {
     var hash = [UInt8](repeating: 0, count: Int(CC_SHA512_DIGEST_LENGTH))
-    var pointer : UnsafePointer<UInt8>? = nil
-    withUnsafeBytes({ (ptr) in pointer = ptr})
+		var pointer : UnsafeRawPointer? = nil
+		withUnsafeBytes({ (ptr) in pointer = ptr.baseAddress })
     CC_SHA512(pointer, CC_LONG(count), &hash)
-    return Data(bytes: UnsafePointer<UInt8>(hash), count: Int(CC_SHA512_DIGEST_LENGTH))
+		return Data(bytes: pointer!, count: Int(CC_SHA512_DIGEST_LENGTH))
   }
 }
 
 
 public extension String {
   
-  public var MD2: String? {
+	var MD2: String? {
     return String(digestData: hashData?.MD2, length: CC_MD2_DIGEST_LENGTH)
   }
   
   
-  public var MD4: String? {
+	var MD4: String? {
     return String(digestData: hashData?.MD4, length: CC_MD4_DIGEST_LENGTH)
   }
   
   
-  public var MD5: String? {
+	var MD5: String? {
     return String(digestData: hashData?.MD5, length: CC_MD5_DIGEST_LENGTH)
   }
   
   
-  public var SHA1: String? {
+	var SHA1: String? {
     return String(digestData: hashData?.SHA1, length: CC_SHA1_DIGEST_LENGTH)
   }
   
   
-  public var SHA224: String? {
+	var SHA224: String? {
     return String(digestData: hashData?.SHA224, length: CC_SHA224_DIGEST_LENGTH)
   }
   
   
-  public var SHA256: String? {
+	var SHA256: String? {
     return String(digestData: hashData?.SHA256, length: CC_SHA256_DIGEST_LENGTH)
   }
   
   
-  public var SHA384: String? {
+	var SHA384: String? {
     return String(digestData: hashData?.SHA384, length: CC_SHA384_DIGEST_LENGTH)
   }
   
   
-  public var SHA512: String? {
+	var SHA512: String? {
     return String(digestData: hashData?.SHA512, length: CC_SHA512_DIGEST_LENGTH)
   }
   
